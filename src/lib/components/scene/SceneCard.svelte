@@ -20,6 +20,7 @@
 			.filter((c) => c !== undefined)
 	);
 	let location = $derived($locations.find((l) => l.id === scene.locationId));
+	let povCharacter = $derived($characters.find((c) => c.id === scene.povCharacterId));
 </script>
 
 <a
@@ -29,10 +30,20 @@
 	<h4 class="mb-2 truncate font-serif text-lg">{scene.title || 'Untitled Scene'}</h4>
 	<div class="flex flex-wrap items-center gap-2">
 		{#each sceneCharacters as character (character.id)}
-			<AvatarThumbnail seed={character.avatar.seed} name={character.name} />
+			<span
+				class="rounded-full {character.id === scene.povCharacterId
+					? 'ring-2 ring-accent ring-offset-2 ring-offset-surface'
+					: ''}"
+				title={character.id === scene.povCharacterId ? `POV: ${character.name}` : character.name}
+			>
+				<AvatarThumbnail seed={character.avatar.seed} name={character.name} />
+			</span>
 		{/each}
 		{#if location}
 			<Badge>{location.name}</Badge>
+		{/if}
+		{#if povCharacter}
+			<Badge variant="protagonist">POV: {povCharacter.name}</Badge>
 		{/if}
 	</div>
 </a>

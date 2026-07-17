@@ -47,6 +47,7 @@
 			characterIds: [],
 			locationId: null,
 			objectIds: [],
+			povCharacterId: null,
 			metadata: [],
 			order: scenesFor(chapterId).length,
 			createdAt: timestamp,

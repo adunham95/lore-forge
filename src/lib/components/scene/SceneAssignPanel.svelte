@@ -10,10 +10,12 @@
 		characterIds: string[];
 		locationId: string | null;
 		objectIds: string[];
+		povCharacterId: string | null;
 		metadata: SceneMetadataField[];
 		onToggleCharacter: (id: string) => void;
 		onSelectLocation: (id: string | null) => void;
 		onToggleObject: (id: string) => void;
+		onSelectPov: (id: string | null) => void;
 		onMetadataChange: (fields: SceneMetadataField[]) => void;
 	}
 
@@ -24,12 +26,20 @@
 		characterIds,
 		locationId,
 		objectIds,
+		povCharacterId,
 		metadata,
 		onToggleCharacter,
 		onSelectLocation,
 		onToggleObject,
+		onSelectPov,
 		onMetadataChange
 	}: Props = $props();
+
+	// POV is picked from the characters already tagged in the scene, plus the current
+	// POV even if it was since untagged, so the selection isn't silently dropped.
+	let povOptions = $derived(
+		characters.filter((c) => characterIds.includes(c.id) || c.id === povCharacterId)
+	);
 </script>
 
 <div class="flex flex-col gap-6">
@@ -67,6 +77,26 @@
 					</label>
 				{/each}
 			</div>
+		{/if}
+	</div>
+
+	<div>
+		<h3 class="mb-2 text-xs font-medium tracking-wide text-text-secondary uppercase">
+			Point of View
+		</h3>
+		{#if povOptions.length === 0}
+			<p class="text-sm text-text-secondary italic">Tag a character above to set a POV.</p>
+		{:else}
+			<select
+				value={povCharacterId ?? ''}
+				onchange={(e) => onSelectPov(e.currentTarget.value || null)}
+				class="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm"
+			>
+				<option value="">None</option>
+				{#each povOptions as character (character.id)}
+					<option value={character.id}>{character.name}</option>
+				{/each}
+			</select>
 		{/if}
 	</div>
 

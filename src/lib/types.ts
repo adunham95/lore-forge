@@ -123,6 +123,7 @@ export interface Scene {
 	characterIds: string[];
 	locationId: string | null;
 	objectIds: string[];
+	povCharacterId: string | null; // whose point of view the scene is told from
 	metadata: SceneMetadataField[]; // free-form fields, e.g. "Time frame" -> "Morning, Day 3"
 	order: number;
 	createdAt: string;

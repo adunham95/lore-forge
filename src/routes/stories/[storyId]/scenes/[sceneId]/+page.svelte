@@ -27,6 +27,7 @@
 	let characterIds = $state<string[]>([]);
 	let locationId = $state<string | null>(null);
 	let objectIds = $state<string[]>([]);
+	let povCharacterId = $state<string | null>(null);
 	let metadata = $state<SceneMetadataField[]>([]);
 	let loadedId = $state<string | undefined>(undefined);
 	let showAssign = $state(false);
@@ -42,6 +43,7 @@
 		characterIds.map((id) => $characters.find((c) => c.id === id)).filter((c) => c !== undefined)
 	);
 	const assignedLocation = $derived($locations.find((l) => l.id === locationId));
+	const povCharacter = $derived($characters.find((c) => c.id === povCharacterId));
 
 	$effect(() => {
 		if (scene && loadedId !== scene.id) {
@@ -50,6 +52,7 @@
 			characterIds = scene.characterIds;
 			locationId = scene.locationId;
 			objectIds = scene.objectIds;
+			povCharacterId = scene.povCharacterId ?? null;
 			metadata = scene.metadata ?? [];
 			loadedId = scene.id;
 		}
@@ -63,6 +66,7 @@
 			title !== scene.title ||
 			content !== scene.content ||
 			locationId !== scene.locationId ||
+			povCharacterId !== (scene.povCharacterId ?? null) ||
 			JSON.stringify(characterIds) !== JSON.stringify(scene.characterIds) ||
 			JSON.stringify(objectIds) !== JSON.stringify(scene.objectIds) ||
 			JSON.stringify(metadata) !== JSON.stringify(scene.metadata ?? []);
@@ -76,6 +80,7 @@
 			characterIds: [...characterIds],
 			locationId,
 			objectIds: [...objectIds],
+			povCharacterId,
 			metadata: metadata.map((f) => ({ ...f }))
 		};
 		const timeoutId = setTimeout(async () => {
@@ -149,10 +154,20 @@
 			{#if assignedCharacters.length > 0 || assignedLocation}
 				<div class="mb-4 flex flex-wrap items-center gap-2">
 					{#each assignedCharacters as character (character.id)}
-						<AvatarThumbnail seed={character.avatar.seed} name={character.name} />
+						<span
+							class="rounded-full {character.id === povCharacterId
+								? 'ring-2 ring-accent ring-offset-2 ring-offset-surface'
+								: ''}"
+							title={character.id === povCharacterId ? `POV: ${character.name}` : character.name}
+						>
+							<AvatarThumbnail seed={character.avatar.seed} name={character.name} />
+						</span>
 					{/each}
 					{#if assignedLocation}
 						<Badge>{assignedLocation.name}</Badge>
+					{/if}
+					{#if povCharacter}
+						<Badge variant="protagonist">POV: {povCharacter.name}</Badge>
 					{/if}
 				</div>
 			{/if}
@@ -170,10 +185,12 @@
 							{characterIds}
 							{locationId}
 							{objectIds}
+							{povCharacterId}
 							{metadata}
 							onToggleCharacter={toggleCharacter}
 							onSelectLocation={(id) => (locationId = id)}
 							onToggleObject={toggleObject}
+							onSelectPov={(id) => (povCharacterId = id)}
 							onMetadataChange={(fields) => (metadata = fields)}
 						/>
 					</div>
@@ -198,10 +215,12 @@
 						{characterIds}
 						{locationId}
 						{objectIds}
+						{povCharacterId}
 						{metadata}
 						onToggleCharacter={toggleCharacter}
 						onSelectLocation={(id) => (locationId = id)}
 						onToggleObject={toggleObject}
+						onSelectPov={(id) => (povCharacterId = id)}
 						onMetadataChange={(fields) => (metadata = fields)}
 					/>
 				</div>
