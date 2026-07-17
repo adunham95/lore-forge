@@ -8,6 +8,7 @@
 	import { lore } from '$lib/stores/lore';
 	import { chapters } from '$lib/stores/chapters';
 	import { scenes } from '$lib/stores/scenes';
+	import ContinueWritingCard from '$lib/components/story/ContinueWritingCard.svelte';
 
 	const storyId = $derived(page.params.storyId as string);
 
@@ -56,6 +57,10 @@
 		{#if $activeStory.synopsis}
 			<p class="mt-3 text-text-secondary">{$activeStory.synopsis}</p>
 		{/if}
+
+		<div class="mt-8">
+			<ContinueWritingCard />
+		</div>
 
 		<div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
 			{#each stats as stat (stat.label)}
