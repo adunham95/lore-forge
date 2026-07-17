@@ -56,7 +56,19 @@ export default defineConfig({
 			},
 			includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png', 'robots.txt'],
 			workbox: {
-				globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}']
+				globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+				// Pages are server-rendered per-request, so none are precached at build time.
+				// Cache them as they're visited so a route stays reachable offline once opened.
+				runtimeCaching: [
+					{
+						urlPattern: ({ request }) => request.mode === 'navigate',
+						handler: 'NetworkFirst',
+						options: {
+							cacheName: 'pages',
+							networkTimeoutSeconds: 3
+						}
+					}
+				]
 			}
 		})
 	]
