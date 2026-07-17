@@ -32,10 +32,9 @@
 			const story = get(activeStory);
 			await Promise.all([
 				loadSeries(),
-				...(story ? [loadCharacters(story)] : []),
-				loadLocations(id),
-				loadObjects(id),
-				loadLore(id),
+				...(story
+					? [loadCharacters(story), loadLocations(story), loadObjects(story), loadLore(story)]
+					: []),
 				loadChapters(id),
 				loadScenesByStory(id)
 			]);

@@ -1,11 +1,33 @@
 import { writable } from 'svelte/store';
-import { getObjectsByStory, save, remove } from '$lib/db';
-import type { StoryObject } from '$lib/types';
+import { getObjectsForStory, save, remove } from '$lib/db';
+import { nowIso } from '$lib/utils/date';
+import type { StoryObject, Story } from '$lib/types';
 
 export const objects = writable<StoryObject[]>([]);
 
-export async function loadObjects(storyId: string) {
-	objects.set(await getObjectsByStory(storyId));
+/** Loads this story's own objects plus any shared across its series. */
+export async function loadObjects(story: Story) {
+	objects.set(await getObjectsForStory(story));
+}
+
+/** Promotes a book-only object to a series-shared object. */
+export async function shareObjectAcrossSeries(object: StoryObject, seriesId: string) {
+	await saveObject({
+		...object,
+		storyId: undefined,
+		seriesId,
+		updatedAt: nowIso()
+	});
+}
+
+/** Demotes a series-shared object back to belonging to a single book. */
+export async function makeObjectStoryOnly(object: StoryObject, storyId: string) {
+	await saveObject({
+		...object,
+		storyId,
+		seriesId: undefined,
+		updatedAt: nowIso()
+	});
 }
 
 export async function saveObject(object: StoryObject) {

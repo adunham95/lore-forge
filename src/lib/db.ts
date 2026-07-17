@@ -19,9 +19,17 @@ interface SwbSchema extends DBSchema {
 		value: Character;
 		indexes: { 'by-story': string; 'by-series': string };
 	};
-	locations: { key: string; value: Location; indexes: { 'by-story': string } };
-	objects: { key: string; value: StoryObject; indexes: { 'by-story': string } };
-	lore: { key: string; value: LoreEntry; indexes: { 'by-story': string } };
+	locations: {
+		key: string;
+		value: Location;
+		indexes: { 'by-story': string; 'by-series': string };
+	};
+	objects: {
+		key: string;
+		value: StoryObject;
+		indexes: { 'by-story': string; 'by-series': string };
+	};
+	lore: { key: string; value: LoreEntry; indexes: { 'by-story': string; 'by-series': string } };
 	chapters: { key: string; value: Chapter; indexes: { 'by-story': string } };
 	scenes: {
 		key: string;
@@ -31,7 +39,7 @@ interface SwbSchema extends DBSchema {
 	settings: { key: string; value: AppSettings };
 }
 
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 
 let _db: IDBPDatabase<SwbSchema> | undefined;
 
@@ -74,6 +82,20 @@ export async function getDb(): Promise<IDBPDatabase<SwbSchema>> {
 				const chars = transaction.objectStore('characters');
 				if (!chars.indexNames.contains('by-series')) {
 					chars.createIndex('by-series', 'seriesId');
+				}
+			}
+			if (oldVersion < 5) {
+				const locs = transaction.objectStore('locations');
+				if (!locs.indexNames.contains('by-series')) {
+					locs.createIndex('by-series', 'seriesId');
+				}
+				const objects = transaction.objectStore('objects');
+				if (!objects.indexNames.contains('by-series')) {
+					objects.createIndex('by-series', 'seriesId');
+				}
+				const lore = transaction.objectStore('lore');
+				if (!lore.indexNames.contains('by-series')) {
+					lore.createIndex('by-series', 'seriesId');
 				}
 			}
 		}
@@ -123,12 +145,51 @@ export async function getLocationsByStory(storyId: string): Promise<Location[]> 
 	return (await getDb()).getAllFromIndex('locations', 'by-story', storyId);
 }
 
+export async function getLocationsBySeries(seriesId: string): Promise<Location[]> {
+	return (await getDb()).getAllFromIndex('locations', 'by-series', seriesId);
+}
+
+/** Locations that live in this story, plus any shared across its series. */
+export async function getLocationsForStory(story: Story): Promise<Location[]> {
+	const [own, shared] = await Promise.all([
+		getLocationsByStory(story.id),
+		story.seriesId ? getLocationsBySeries(story.seriesId) : Promise.resolve([])
+	]);
+	return [...own, ...shared];
+}
+
 export async function getObjectsByStory(storyId: string): Promise<StoryObject[]> {
 	return (await getDb()).getAllFromIndex('objects', 'by-story', storyId);
 }
 
+export async function getObjectsBySeries(seriesId: string): Promise<StoryObject[]> {
+	return (await getDb()).getAllFromIndex('objects', 'by-series', seriesId);
+}
+
+/** Objects that live in this story, plus any shared across its series. */
+export async function getObjectsForStory(story: Story): Promise<StoryObject[]> {
+	const [own, shared] = await Promise.all([
+		getObjectsByStory(story.id),
+		story.seriesId ? getObjectsBySeries(story.seriesId) : Promise.resolve([])
+	]);
+	return [...own, ...shared];
+}
+
 export async function getLoreByStory(storyId: string): Promise<LoreEntry[]> {
 	return (await getDb()).getAllFromIndex('lore', 'by-story', storyId);
+}
+
+export async function getLoreBySeries(seriesId: string): Promise<LoreEntry[]> {
+	return (await getDb()).getAllFromIndex('lore', 'by-series', seriesId);
+}
+
+/** Lore entries that live in this story, plus any shared across its series. */
+export async function getLoreForStory(story: Story): Promise<LoreEntry[]> {
+	const [own, shared] = await Promise.all([
+		getLoreByStory(story.id),
+		story.seriesId ? getLoreBySeries(story.seriesId) : Promise.resolve([])
+	]);
+	return [...own, ...shared];
 }
 
 export async function getChaptersByStory(storyId: string): Promise<Chapter[]> {
@@ -168,25 +229,34 @@ export async function remove(store: EntityStore, id: string): Promise<void> {
 
 /**
  * Deletes a story and every entity that belongs to it (cascade delete).
- * Series-shared characters are left untouched — unless this is the last
- * remaining story in its series, in which case they have no other book to
- * live in and are deleted along with it.
+ * Series-shared characters, locations, objects, and lore are left untouched —
+ * unless this is the last remaining story in its series, in which case they
+ * have no other book to live in and are deleted along with it.
  */
 export async function removeStoryCascade(storyId: string): Promise<void> {
 	const db = await getDb();
 	const target = await db.get('stories', storyId);
 
 	let orphanedSharedCharacterKeys: string[] = [];
+	let orphanedSharedLocationKeys: string[] = [];
+	let orphanedSharedObjectKeys: string[] = [];
+	let orphanedSharedLoreKeys: string[] = [];
 	if (target?.seriesId) {
 		const siblings = (await db.getAll('stories')).filter(
 			(s) => s.seriesId === target.seriesId && s.id !== storyId
 		);
 		if (siblings.length === 0) {
-			orphanedSharedCharacterKeys = await db.getAllKeysFromIndex(
-				'characters',
-				'by-series',
-				target.seriesId
-			);
+			[
+				orphanedSharedCharacterKeys,
+				orphanedSharedLocationKeys,
+				orphanedSharedObjectKeys,
+				orphanedSharedLoreKeys
+			] = await Promise.all([
+				db.getAllKeysFromIndex('characters', 'by-series', target.seriesId),
+				db.getAllKeysFromIndex('locations', 'by-series', target.seriesId),
+				db.getAllKeysFromIndex('objects', 'by-series', target.seriesId),
+				db.getAllKeysFromIndex('lore', 'by-series', target.seriesId)
+			]);
 		}
 	}
 
@@ -209,8 +279,11 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 		...characters.map((key) => tx.objectStore('characters').delete(key)),
 		...orphanedSharedCharacterKeys.map((key) => tx.objectStore('characters').delete(key)),
 		...locations.map((key) => tx.objectStore('locations').delete(key)),
+		...orphanedSharedLocationKeys.map((key) => tx.objectStore('locations').delete(key)),
 		...objects.map((key) => tx.objectStore('objects').delete(key)),
+		...orphanedSharedObjectKeys.map((key) => tx.objectStore('objects').delete(key)),
 		...lore.map((key) => tx.objectStore('lore').delete(key)),
+		...orphanedSharedLoreKeys.map((key) => tx.objectStore('lore').delete(key)),
 		...chapters.map((key) => tx.objectStore('chapters').delete(key)),
 		...scenes.map((key) => tx.objectStore('scenes').delete(key))
 	]);
@@ -220,17 +293,25 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 
 /**
  * Dissolves a series: unlinks every book (they become standalone stories)
- * and hands series-shared characters off to the earliest book, since a
- * character always needs exactly one home once it's no longer series-wide.
+ * and hands series-shared characters, locations, objects, and lore off to the
+ * earliest book, since each always needs exactly one home once it's no longer
+ * series-wide.
  */
 export async function removeSeriesCascade(seriesId: string): Promise<void> {
 	const db = await getDb();
-	const tx = db.transaction(['series', 'stories', 'characters'], 'readwrite');
+	const tx = db.transaction(
+		['series', 'stories', 'characters', 'locations', 'objects', 'lore'],
+		'readwrite'
+	);
 
-	const [allStories, sharedCharacters] = await Promise.all([
-		tx.objectStore('stories').getAll(),
-		tx.objectStore('characters').index('by-series').getAll(seriesId)
-	]);
+	const [allStories, sharedCharacters, sharedLocations, sharedObjects, sharedLore] =
+		await Promise.all([
+			tx.objectStore('stories').getAll(),
+			tx.objectStore('characters').index('by-series').getAll(seriesId),
+			tx.objectStore('locations').index('by-series').getAll(seriesId),
+			tx.objectStore('objects').index('by-series').getAll(seriesId),
+			tx.objectStore('lore').index('by-series').getAll(seriesId)
+		]);
 
 	const seriesStories = allStories.filter((s) => s.seriesId === seriesId);
 	const anchor = [...seriesStories].sort(
@@ -246,6 +327,18 @@ export async function removeSeriesCascade(seriesId: string): Promise<void> {
 		...sharedCharacters.map((c) => {
 			const { seriesId: _seriesId, ...rest } = c;
 			return tx.objectStore('characters').put(anchor ? { ...rest, storyId: anchor.id } : rest);
+		}),
+		...sharedLocations.map((l) => {
+			const { seriesId: _seriesId, ...rest } = l;
+			return tx.objectStore('locations').put(anchor ? { ...rest, storyId: anchor.id } : rest);
+		}),
+		...sharedObjects.map((o) => {
+			const { seriesId: _seriesId, ...rest } = o;
+			return tx.objectStore('objects').put(anchor ? { ...rest, storyId: anchor.id } : rest);
+		}),
+		...sharedLore.map((entry) => {
+			const { seriesId: _seriesId, ...rest } = entry;
+			return tx.objectStore('lore').put(anchor ? { ...rest, storyId: anchor.id } : rest);
 		})
 	]);
 

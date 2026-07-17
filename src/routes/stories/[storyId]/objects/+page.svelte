@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { objects, saveObject } from '$lib/stores/objects';
+	import { activeStory } from '$lib/stores/stories';
 	import { byUpdatedDesc } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -18,11 +19,13 @@
 	let name = $state('');
 	let type = $state('');
 	let description = $state('');
+	let scope = $state<'book' | 'series'>('book');
 
 	function openCreate() {
 		name = '';
 		type = '';
 		description = '';
+		scope = 'book';
 		showCreate = true;
 	}
 
@@ -30,9 +33,11 @@
 		e.preventDefault();
 		if (!name.trim()) return;
 		const timestamp = nowIso();
+		const shareAcrossSeries = scope === 'series' && $activeStory?.seriesId;
 		const object = {
 			id: newId(),
-			storyId,
+			storyId: shareAcrossSeries ? undefined : storyId,
+			seriesId: shareAcrossSeries ? $activeStory!.seriesId : undefined,
 			name: name.trim(),
 			type: type.trim(),
 			description: description.trim(),
@@ -65,7 +70,7 @@
 {:else}
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 		{#each sortedObjects as object (object.id)}
-			<ObjectCard {object} />
+			<ObjectCard {object} {storyId} />
 		{/each}
 	</div>
 {/if}
@@ -98,6 +103,21 @@
 					class="rounded-md border border-border bg-surface px-3 py-2"
 					placeholder="A short summary of this object."></textarea>
 			</label>
+			{#if $activeStory?.seriesId}
+				<div class="flex flex-col gap-1 text-sm">
+					<span class="text-text-secondary">Appears in</span>
+					<div class="flex gap-4">
+						<label class="flex items-center gap-2">
+							<input type="radio" bind:group={scope} value="book" />
+							This book only
+						</label>
+						<label class="flex items-center gap-2">
+							<input type="radio" bind:group={scope} value="series" />
+							Whole series
+						</label>
+					</div>
+				</div>
+			{/if}
 			<div class="mt-2 flex justify-end gap-2">
 				<Button variant="secondary" onclick={() => (showCreate = false)}>Cancel</Button>
 				<Button type="submit">Create Object</Button>

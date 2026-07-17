@@ -5,12 +5,13 @@
 
 	interface Props {
 		object: StoryObject;
+		storyId: string;
 	}
 
-	let { object }: Props = $props();
+	let { object, storyId }: Props = $props();
 	let href = $derived(
 		resolve('/stories/[storyId]/objects/[objectId]', {
-			storyId: object.storyId,
+			storyId,
 			objectId: object.id
 		})
 	);
@@ -22,9 +23,14 @@
 >
 	<div class="mb-2 flex items-center justify-between gap-2">
 		<h3 class="font-serif text-xl">{object.name}</h3>
-		{#if object.type}
-			<Badge>{object.type}</Badge>
-		{/if}
+		<div class="flex items-center gap-2">
+			{#if object.seriesId}
+				<Badge variant="neutral">Series</Badge>
+			{/if}
+			{#if object.type}
+				<Badge>{object.type}</Badge>
+			{/if}
+		</div>
 	</div>
 	{#if object.description}
 		<p class="line-clamp-2 text-sm text-text-secondary">{object.description}</p>

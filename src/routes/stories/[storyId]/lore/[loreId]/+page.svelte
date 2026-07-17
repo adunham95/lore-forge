@@ -2,9 +2,17 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { lore, saveLoreEntry, deleteLoreEntry } from '$lib/stores/lore';
+	import {
+		lore,
+		saveLoreEntry,
+		deleteLoreEntry,
+		shareLoreAcrossSeries,
+		makeLoreStoryOnly
+	} from '$lib/stores/lore';
+	import { activeStory } from '$lib/stores/stories';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
+	import Badge from '$lib/components/ui/Badge.svelte';
 	import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
 
 	const storyId = $derived(page.params.storyId as string);
@@ -37,6 +45,15 @@
 		});
 	}
 
+	async function toggleSeriesSharing() {
+		if (!entry) return;
+		if (entry.seriesId) {
+			await makeLoreStoryOnly(entry, storyId);
+		} else if ($activeStory?.seriesId) {
+			await shareLoreAcrossSeries(entry, $activeStory.seriesId);
+		}
+	}
+
 	async function removeEntry() {
 		if (!entry) return;
 		if (confirm(`Delete "${entry.title}"?`)) {
@@ -56,6 +73,17 @@
 		>
 			&larr; Lore
 		</a>
+
+		{#if entry.seriesId || $activeStory?.seriesId}
+			<div class="mb-4 flex items-center gap-2">
+				{#if entry.seriesId}
+					<Badge variant="neutral">Series lore</Badge>
+				{/if}
+				<Button variant="ghost" type="button" onclick={toggleSeriesSharing}>
+					{entry.seriesId ? 'Make book-only' : 'Share across series'}
+				</Button>
+			</div>
+		{/if}
 
 		<form class="flex flex-col gap-4" onsubmit={save}>
 			<label class="flex flex-col gap-1 text-sm">

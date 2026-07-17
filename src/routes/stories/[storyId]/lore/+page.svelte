@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { lore, saveLoreEntry } from '$lib/stores/lore';
+	import { activeStory } from '$lib/stores/stories';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -24,10 +25,12 @@
 	let showCreate = $state(false);
 	let title = $state('');
 	let category = $state('');
+	let scope = $state<'book' | 'series'>('book');
 
 	function openCreate() {
 		title = '';
 		category = '';
+		scope = 'book';
 		showCreate = true;
 	}
 
@@ -35,9 +38,11 @@
 		e.preventDefault();
 		if (!title.trim()) return;
 		const timestamp = nowIso();
+		const shareAcrossSeries = scope === 'series' && $activeStory?.seriesId;
 		const entry = {
 			id: newId(),
-			storyId,
+			storyId: shareAcrossSeries ? undefined : storyId,
+			seriesId: shareAcrossSeries ? $activeStory!.seriesId : undefined,
 			title: title.trim(),
 			category: category.trim(),
 			content: '',
@@ -75,7 +80,7 @@
 				</h2>
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{#each entries as entry (entry.id)}
-						<LoreCard {entry} />
+						<LoreCard {entry} {storyId} />
 					{/each}
 				</div>
 			</div>
@@ -103,6 +108,21 @@
 					placeholder="Magic System, Factions, History..."
 				/>
 			</label>
+			{#if $activeStory?.seriesId}
+				<div class="flex flex-col gap-1 text-sm">
+					<span class="text-text-secondary">Appears in</span>
+					<div class="flex gap-4">
+						<label class="flex items-center gap-2">
+							<input type="radio" bind:group={scope} value="book" />
+							This book only
+						</label>
+						<label class="flex items-center gap-2">
+							<input type="radio" bind:group={scope} value="series" />
+							Whole series
+						</label>
+					</div>
+				</div>
+			{/if}
 			<div class="mt-2 flex justify-end gap-2">
 				<Button variant="secondary" onclick={() => (showCreate = false)}>Cancel</Button>
 				<Button type="submit">Create Entry</Button>

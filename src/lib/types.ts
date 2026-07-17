@@ -82,7 +82,10 @@ export interface Character {
 
 export interface Location {
 	id: string;
-	storyId: string;
+	// Exactly one of these is set: `storyId` for a location that belongs to a
+	// single book, `seriesId` for a location shared across every book in the series.
+	storyId?: string;
+	seriesId?: string;
 	name: string;
 	type: string;
 	description: string;
@@ -93,7 +96,10 @@ export interface Location {
 
 export interface StoryObject {
 	id: string;
-	storyId: string;
+	// Exactly one of these is set: `storyId` for an object that belongs to a
+	// single book, `seriesId` for an object shared across every book in the series.
+	storyId?: string;
+	seriesId?: string;
 	name: string;
 	type: string; // free text: "Ship", "Weapon", "Artifact", etc.
 	description: string;
@@ -104,7 +110,10 @@ export interface StoryObject {
 
 export interface LoreEntry {
 	id: string;
-	storyId: string;
+	// Exactly one of these is set: `storyId` for a lore entry that belongs to a
+	// single book, `seriesId` for a lore entry shared across every book in the series.
+	storyId?: string;
+	seriesId?: string;
 	title: string;
 	category: string;
 	content: string; // Markdown

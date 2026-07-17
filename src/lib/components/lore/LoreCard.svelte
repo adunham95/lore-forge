@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import Badge from '$lib/components/ui/Badge.svelte';
 	import type { LoreEntry } from '$lib/types';
 
 	interface Props {
 		entry: LoreEntry;
+		storyId: string;
 	}
 
-	let { entry }: Props = $props();
+	let { entry, storyId }: Props = $props();
 	let href = $derived(
-		resolve('/stories/[storyId]/lore/[loreId]', { storyId: entry.storyId, loreId: entry.id })
+		resolve('/stories/[storyId]/lore/[loreId]', { storyId, loreId: entry.id })
 	);
 	let excerpt = $derived(
 		entry.content
@@ -22,7 +24,12 @@
 	{href}
 	class="block rounded-lg border border-border bg-surface p-4 shadow-sm transition hover:border-accent/40 hover:shadow-md"
 >
-	<h3 class="font-serif text-xl">{entry.title}</h3>
+	<div class="mb-2 flex items-center justify-between gap-2">
+		<h3 class="font-serif text-xl">{entry.title}</h3>
+		{#if entry.seriesId}
+			<Badge variant="neutral">Series</Badge>
+		{/if}
+	</div>
 	{#if excerpt}
 		<p class="line-clamp-2 text-sm text-text-secondary">{excerpt}</p>
 	{/if}
