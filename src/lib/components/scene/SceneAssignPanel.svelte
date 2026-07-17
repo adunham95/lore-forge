@@ -1,6 +1,7 @@
 <script lang="ts">
 	import AvatarThumbnail from '$lib/components/avatar/AvatarThumbnail.svelte';
-	import type { Character, Location, StoryObject } from '$lib/types';
+	import SceneMetadataPanel from '$lib/components/scene/SceneMetadataPanel.svelte';
+	import type { Character, Location, StoryObject, SceneMetadataField } from '$lib/types';
 
 	interface Props {
 		characters: Character[];
@@ -9,9 +10,11 @@
 		characterIds: string[];
 		locationId: string | null;
 		objectIds: string[];
+		metadata: SceneMetadataField[];
 		onToggleCharacter: (id: string) => void;
 		onSelectLocation: (id: string | null) => void;
 		onToggleObject: (id: string) => void;
+		onMetadataChange: (fields: SceneMetadataField[]) => void;
 	}
 
 	let {
@@ -21,9 +24,11 @@
 		characterIds,
 		locationId,
 		objectIds,
+		metadata,
 		onToggleCharacter,
 		onSelectLocation,
-		onToggleObject
+		onToggleObject,
+		onMetadataChange
 	}: Props = $props();
 </script>
 
@@ -86,4 +91,6 @@
 			</div>
 		{/if}
 	</div>
+
+	<SceneMetadataPanel fields={metadata} onChange={onMetadataChange} />
 </div>

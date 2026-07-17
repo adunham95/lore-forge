@@ -47,6 +47,7 @@
 			characterIds: [],
 			locationId: null,
 			objectIds: [],
+			metadata: [],
 			order: scenesFor(chapterId).length,
 			createdAt: timestamp,
 			updatedAt: timestamp

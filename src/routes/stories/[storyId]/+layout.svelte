@@ -10,6 +10,7 @@
 	import { loadChapters } from '$lib/stores/chapters';
 	import { loadScenesByStory } from '$lib/stores/scenes';
 	import { settings } from '$lib/stores/settings';
+	import { focusMode } from '$lib/stores/focus';
 	import { resolveTheme } from '$lib/utils/theme';
 	import StorySidebar from '$lib/components/layout/StorySidebar.svelte';
 
@@ -47,14 +48,18 @@
 
 {#if ready && $activeStory}
 	<div
-		class="story-shell flex min-h-[calc(100vh-65px)] flex-col md:flex-row"
+		class="story-shell flex {$focusMode
+			? 'min-h-screen'
+			: 'min-h-[calc(100vh-65px)]'} flex-col md:flex-row"
 		style="
 			--accent: {$settings.darkMode ? theme.accentDark : theme.accentLight};
 			--accent-soft: {$settings.darkMode ? theme.accentSoftDark : theme.accentSoft};
 			--accent-text: {theme.accentText};
 		"
 	>
-		<StorySidebar {storyId} />
+		{#if !$focusMode}
+			<StorySidebar {storyId} />
+		{/if}
 		<div class="flex-1 overflow-y-auto p-4 md:p-8">
 			{@render children()}
 		</div>

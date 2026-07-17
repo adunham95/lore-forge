@@ -108,6 +108,12 @@ export interface Chapter {
 	updatedAt: string;
 }
 
+export interface SceneMetadataField {
+	id: string;
+	key: string;
+	value: string;
+}
+
 export interface Scene {
 	id: string;
 	storyId: string;
@@ -117,6 +123,7 @@ export interface Scene {
 	characterIds: string[];
 	locationId: string | null;
 	objectIds: string[];
+	metadata: SceneMetadataField[]; // free-form fields, e.g. "Time frame" -> "Morning, Day 3"
 	order: number;
 	createdAt: string;
 	updatedAt: string;
