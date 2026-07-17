@@ -8,7 +8,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
-	import StoryCard from '$lib/components/story/StoryCard.svelte';
+	import BookRow from '$lib/components/story/BookRow.svelte';
 	import ThemePicker from '$lib/components/story/ThemePicker.svelte';
 	import type { StoryTheme } from '$lib/types';
 
@@ -67,10 +67,18 @@
 			{/snippet}
 		</EmptyState>
 	{:else}
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="mx-auto flex max-w-2xl flex-col gap-3">
 			{#each sortedStories as story (story.id)}
-				<StoryCard {story} onDelete={() => deleteStory(story.id)} />
+				<BookRow {story} onDelete={() => deleteStory(story.id)} />
 			{/each}
+			<button
+				type="button"
+				onclick={openCreate}
+				class="flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border p-4 text-text-secondary transition hover:border-accent hover:text-accent"
+			>
+				<span class="text-lg leading-none">+</span>
+				<span class="text-sm">New Story</span>
+			</button>
 		</div>
 	{/if}
 </div>
