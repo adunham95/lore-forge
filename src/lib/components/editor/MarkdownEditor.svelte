@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { renderMarkdown } from '$lib/utils/markdown';
+	import { settings, updateSettings } from '$lib/stores/settings';
 
 	interface Props {
 		value: string;
@@ -9,6 +10,14 @@
 	}
 
 	let { value = $bindable(), placeholder = '', rows = 10 }: Props = $props();
+
+	const MIN_FONT_SIZE = 12;
+	const MAX_FONT_SIZE = 24;
+
+	function adjustFontSize(delta: number) {
+		const next = Math.min(MAX_FONT_SIZE, Math.max(MIN_FONT_SIZE, $settings.editorFontSize + delta));
+		updateSettings({ editorFontSize: next });
+	}
 
 	let tab = $state<'write' | 'preview'>('write');
 	let html = $derived(renderMarkdown(value));
@@ -137,6 +146,29 @@
 						{action.label}
 					</button>
 				{/each}
+				<div class="ml-auto flex items-center gap-1">
+					<button
+						type="button"
+						title="Decrease font size"
+						aria-label="Decrease font size"
+						onclick={() => adjustFontSize(-1)}
+						disabled={$settings.editorFontSize <= MIN_FONT_SIZE}
+						class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary disabled:opacity-40"
+					>
+						A-
+					</button>
+					<span class="w-6 text-center text-xs text-text-secondary">{$settings.editorFontSize}</span>
+					<button
+						type="button"
+						title="Increase font size"
+						aria-label="Increase font size"
+						onclick={() => adjustFontSize(1)}
+						disabled={$settings.editorFontSize >= MAX_FONT_SIZE}
+						class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary disabled:opacity-40"
+					>
+						A+
+					</button>
+				</div>
 			</div>
 			<textarea
 				bind:this={textareaEl}
@@ -144,12 +176,13 @@
 				{placeholder}
 				{rows}
 				onkeydown={onKeydown}
-				class="w-full resize-y bg-surface p-3 font-mono text-sm text-text-primary focus:outline-none"
+				style="font-size: {$settings.editorFontSize}px"
+				class="w-full resize-y bg-surface p-3 font-mono text-text-primary focus:outline-none"
 			></textarea>
 		</div>
 		<div class="{tab === 'preview' ? 'block' : 'hidden'} md:block">
 			{#if html}
-				<div class="prose max-w-none p-3" style="font-size: 1rem; line-height: 1.7">
+				<div class="prose max-w-none p-3" style="font-size: {$settings.editorFontSize}px; line-height: 1.7">
 					<!-- Content is authored locally by this browser's own user and never leaves the device — no multi-tenant XSS surface. -->
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html html}
