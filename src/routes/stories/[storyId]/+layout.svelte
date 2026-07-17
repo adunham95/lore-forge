@@ -52,7 +52,7 @@
 {#if ready && $activeStory}
 	<div
 		class="story-shell flex {$focusMode
-			? 'min-h-screen'
+			? 'h-screen overflow-hidden'
 			: 'min-h-[calc(100vh-65px)]'} flex-col md:flex-row"
 		style="
 			--accent: {$settings.darkMode ? theme.accentDark : theme.accentLight};
@@ -63,7 +63,11 @@
 		{#if !$focusMode}
 			<StorySidebar {storyId} />
 		{/if}
-		<div class="flex-1 overflow-y-auto p-4 md:p-8">
+		<div
+			class="flex-1 p-4 md:p-8 {$focusMode
+				? 'flex min-h-0 flex-col overflow-hidden'
+				: 'overflow-y-auto'}"
+		>
 			{@render children()}
 		</div>
 	</div>

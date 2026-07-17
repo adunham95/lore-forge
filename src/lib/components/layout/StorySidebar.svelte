@@ -79,7 +79,7 @@
 			? 'text-accent'
 			: 'text-text-primary'}"
 	>
-		&larr; Overview
+		Overview
 	</a>
 
 	{#each groups as group (group.section)}

@@ -118,7 +118,7 @@
 <svelte:window onkeydown={onKeydown} />
 
 {#if scene}
-	<div class="mx-auto max-w-4xl {$focusMode ? 'max-w-3xl' : ''}">
+	<div class="mx-auto {$focusMode ? 'flex h-full min-h-0 w-full flex-col' : 'max-w-4xl'}">
 		<div class="mb-4 flex items-center justify-between">
 			{#if $focusMode}
 				<span></span>
@@ -198,11 +198,14 @@
 			</div>
 		{/if}
 
-		<div class="flex flex-col gap-6 md:flex-row">
-			<div class="flex-1">
+		<div
+			class="flex flex-col gap-6 md:flex-row {$focusMode ? 'min-h-0 flex-1' : ''}"
+		>
+			<div class="flex flex-1 flex-col {$focusMode ? 'min-h-0' : ''}">
 				<MarkdownEditor
 					bind:value={content}
 					rows={$focusMode ? 32 : 20}
+					expand={$focusMode}
 					placeholder="Write the scene..."
 				/>
 			</div>

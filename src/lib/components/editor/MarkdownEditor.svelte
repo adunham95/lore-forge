@@ -7,9 +7,11 @@
 		value: string;
 		placeholder?: string;
 		rows?: number;
+		/** Fill the height of the parent container instead of sizing off `rows`, and disable manual resize. */
+		expand?: boolean;
 	}
 
-	let { value = $bindable(), placeholder = '', rows = 10 }: Props = $props();
+	let { value = $bindable(), placeholder = '', rows = 10, expand = false }: Props = $props();
 
 	const MIN_FONT_SIZE = 12;
 	const MAX_FONT_SIZE = 24;
@@ -110,8 +112,8 @@
 	];
 </script>
 
-<div class="rounded-lg border border-border">
-	<div class="flex border-b border-border bg-surface-raised md:hidden">
+<div class="flex {expand ? 'h-full min-h-0' : ''} flex-col rounded-lg border border-border">
+	<div class="flex border-b border-border bg-surface-raised">
 		<button
 			type="button"
 			onclick={() => (tab = 'write')}
@@ -132,64 +134,73 @@
 		</button>
 	</div>
 
-	<div class="md:grid md:grid-cols-2">
-		<div class="{tab === 'write' ? 'block' : 'hidden'} md:block md:border-r md:border-border">
-			<div class="flex gap-1 overflow-x-auto border-b border-border bg-surface-raised p-1.5">
-				{#each toolbarActions as action (action.label)}
-					<button
-						type="button"
-						title={action.title}
-						aria-label={action.title}
-						onclick={action.action}
-						class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary {action.class}"
-					>
-						{action.label}
-					</button>
-				{/each}
-				<div class="ml-auto flex items-center gap-1">
-					<button
-						type="button"
-						title="Decrease font size"
-						aria-label="Decrease font size"
-						onclick={() => adjustFontSize(-1)}
-						disabled={$settings.editorFontSize <= MIN_FONT_SIZE}
-						class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary disabled:opacity-40"
-					>
-						A-
-					</button>
-					<span class="w-6 text-center text-xs text-text-secondary">{$settings.editorFontSize}</span>
-					<button
-						type="button"
-						title="Increase font size"
-						aria-label="Increase font size"
-						onclick={() => adjustFontSize(1)}
-						disabled={$settings.editorFontSize >= MAX_FONT_SIZE}
-						class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary disabled:opacity-40"
-					>
-						A+
-					</button>
-				</div>
+	<div
+		class="{tab === 'write'
+			? expand
+				? 'flex min-h-0 flex-1 flex-col'
+				: 'block'
+			: 'hidden'}"
+	>
+		<div class="flex gap-1 overflow-x-auto border-b border-border bg-surface-raised p-1.5">
+			{#each toolbarActions as action (action.label)}
+				<button
+					type="button"
+					title={action.title}
+					aria-label={action.title}
+					onclick={action.action}
+					class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary {action.class}"
+				>
+					{action.label}
+				</button>
+			{/each}
+			<div class="ml-auto flex items-center gap-1">
+				<button
+					type="button"
+					title="Decrease font size"
+					aria-label="Decrease font size"
+					onclick={() => adjustFontSize(-1)}
+					disabled={$settings.editorFontSize <= MIN_FONT_SIZE}
+					class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary disabled:opacity-40"
+				>
+					A-
+				</button>
+				<span class="w-6 text-center text-xs text-text-secondary">{$settings.editorFontSize}</span>
+				<button
+					type="button"
+					title="Increase font size"
+					aria-label="Increase font size"
+					onclick={() => adjustFontSize(1)}
+					disabled={$settings.editorFontSize >= MAX_FONT_SIZE}
+					class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary disabled:opacity-40"
+				>
+					A+
+				</button>
 			</div>
-			<textarea
-				bind:this={textareaEl}
-				bind:value
-				{placeholder}
-				{rows}
-				onkeydown={onKeydown}
-				style="font-size: {$settings.editorFontSize}px"
-				class="w-full resize-y bg-surface p-3 font-mono text-text-primary focus:outline-none"
-			></textarea>
 		</div>
-		<div class="{tab === 'preview' ? 'block' : 'hidden'} md:block">
-			{#if html}
-				<div class="prose max-w-none p-3" style="font-size: {$settings.editorFontSize}px; line-height: 1.7">
-					<!-- Content is authored locally by this browser's own user and never leaves the device — no multi-tenant XSS surface. -->
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html html}
-				</div>
-			{:else}
-				<p class="p-3 text-sm text-text-secondary italic">Nothing to preview yet.</p>
-			{/if}
-		</div>
+		<textarea
+			bind:this={textareaEl}
+			bind:value
+			{placeholder}
+			rows={expand ? undefined : rows}
+			onkeydown={onKeydown}
+			style="font-size: {$settings.editorFontSize}px"
+			class="w-full bg-surface p-3 font-mono text-text-primary focus:outline-none {expand
+				? 'min-h-0 flex-1 resize-none'
+				: 'resize-y'}"
+		></textarea>
+	</div>
+	<div class={tab === 'preview' ? 'block' : 'hidden'}>
+		{#if html}
+			<div
+				class="prose max-w-none p-3"
+				style="font-size: {$settings.editorFontSize}px; line-height: 1.7"
+			>
+				<!-- Content is authored locally by this browser's own user and never leaves the device — no multi-tenant XSS surface. -->
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html html}
+			</div>
+		{:else}
+			<p class="p-3 text-sm text-text-secondary italic">Nothing to preview yet.</p>
+		{/if}
 	</div>
 </div>
