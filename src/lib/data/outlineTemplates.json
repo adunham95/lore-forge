@@ -1,0 +1,150 @@
+[
+	{
+		"id": "heros-journey",
+		"name": "The Hero's Journey",
+		"description": "Joseph Campbell's classic monomyth, in three acts and twelve stages.",
+		"acts": [
+			{
+				"name": "Act 1 - Departure",
+				"chapters": [
+					"The Ordinary World",
+					"Call to Adventure",
+					"Refusal of the Call",
+					"Meeting the Mentor",
+					"Crossing the Threshold"
+				]
+			},
+			{
+				"name": "Act 2 - Descent and Initiation",
+				"chapters": [
+					"Tests, Allies, and Enemies",
+					"Approach to the Inmost Cave",
+					"The Ordeal",
+					"Reward (Seizing the Sword)"
+				]
+			},
+			{
+				"name": "Act 3 - Return and Reintegration",
+				"chapters": ["The Road Back", "Resurrection", "Return with the Elixir"]
+			}
+		]
+	},
+	{
+		"id": "three-act",
+		"name": "Three-Act Structure",
+		"description": "The classic setup, confrontation, and resolution structure.",
+		"acts": [
+			{
+				"name": "Act 1 - Setup",
+				"chapters": ["Opening Image", "Inciting Incident", "Plot Point One"]
+			},
+			{
+				"name": "Act 2 - Confrontation",
+				"chapters": ["Rising Action", "Midpoint", "Complications", "Plot Point Two"]
+			},
+			{
+				"name": "Act 3 - Resolution",
+				"chapters": ["Climax", "Falling Action", "Denouement"]
+			}
+		]
+	},
+	{
+		"id": "save-the-cat",
+		"name": "Save the Cat Beat Sheet",
+		"description": "Blake Snyder's fifteen-beat structure for tightly plotted stories.",
+		"acts": [
+			{
+				"name": "Act 1",
+				"chapters": [
+					"Opening Image",
+					"Theme Stated",
+					"Setup",
+					"Catalyst",
+					"Debate",
+					"Break Into Two"
+				]
+			},
+			{
+				"name": "Act 2",
+				"chapters": [
+					"B Story",
+					"Fun and Games",
+					"Midpoint",
+					"Bad Guys Close In",
+					"All Is Lost",
+					"Dark Night of the Soul",
+					"Break Into Three"
+				]
+			},
+			{
+				"name": "Act 3",
+				"chapters": ["Finale", "Final Image"]
+			}
+		]
+	},
+	{
+		"id": "freytags-pyramid",
+		"name": "Freytag's Pyramid",
+		"description": "Gustav Freytag's five-part dramatic arc, rising to a climax and falling to resolution.",
+		"acts": [
+			{
+				"name": "Exposition",
+				"chapters": ["Introduction", "Inciting Incident"]
+			},
+			{
+				"name": "Rising Action",
+				"chapters": ["Rising Action I", "Rising Action II", "Rising Action III"]
+			},
+			{
+				"name": "Climax",
+				"chapters": ["Climax"]
+			},
+			{
+				"name": "Falling Action",
+				"chapters": ["Falling Action I", "Falling Action II"]
+			},
+			{
+				"name": "Denouement",
+				"chapters": ["Resolution"]
+			}
+		]
+	},
+	{
+		"id": "story-circle",
+		"name": "Dan Harmon's Story Circle",
+		"description": "An eight-step descent into the unfamiliar and return, adapted from the hero's journey.",
+		"acts": [
+			{
+				"name": "Descent",
+				"chapters": ["You (Comfort Zone)", "Need", "Go", "Search"]
+			},
+			{
+				"name": "Ascent",
+				"chapters": ["Find", "Take", "Return", "Change"]
+			}
+		]
+	},
+	{
+		"id": "story-clock",
+		"name": "Story Clock",
+		"description": "A twelve-beat structure mapped to the four quarters of a clock face.",
+		"acts": [
+			{
+				"name": "12:00 to 3:00 - Setup",
+				"chapters": ["12:00 - Ordinary World", "1:00 - Introduce Cast", "2:00 - Inciting Incident"]
+			},
+			{
+				"name": "3:00 to 6:00 - Rising Action",
+				"chapters": ["3:00 - Turn Into Act Two", "4:00 - New Situation", "5:00 - First Obstacles"]
+			},
+			{
+				"name": "6:00 to 9:00 - Complications",
+				"chapters": ["6:00 - Midpoint", "7:00 - Raising Stakes", "8:00 - Major Setback"]
+			},
+			{
+				"name": "9:00 to 12:00 - Resolution",
+				"chapters": ["9:00 - Turn Into Act Three", "10:00 - Climax", "11:00 - Falling Action"]
+			}
+		]
+	}
+]

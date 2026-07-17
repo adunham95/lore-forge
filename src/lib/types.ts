@@ -125,9 +125,22 @@ export interface Chapter {
 	id: string;
 	storyId: string;
 	title: string;
+	act: string; // free text, e.g. "Act 1 - Departure"; empty string if unassigned
 	order: number;
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface OutlineTemplateAct {
+	name: string;
+	chapters: string[];
+}
+
+export interface OutlineTemplate {
+	id: string;
+	name: string;
+	description: string;
+	acts: OutlineTemplateAct[];
 }
 
 export interface SceneMetadataField {
