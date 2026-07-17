@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { characters, saveCharacter } from '$lib/stores/characters';
+	import { activeStory } from '$lib/stores/stories';
 	import { byUpdatedDesc } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -21,24 +22,27 @@
 	let age = $state('');
 	let job = $state('');
 	let role = $state<CharacterRole>('supporting');
+	let scope = $state<'book' | 'series'>('book');
 
 	function openCreate() {
 		name = '';
 		age = '';
 		job = '';
 		role = 'supporting';
+		scope = 'book';
 		showCreate = true;
 	}
 
 	async function submitCreate(e: SubmitEvent) {
 		e.preventDefault();
 		if (!name) return;
-		console.log({ name, age, job });
 		const timestamp = nowIso();
 		const id = newId();
+		const shareAcrossSeries = scope === 'series' && $activeStory?.seriesId;
 		const character = {
 			id,
-			storyId,
+			storyId: shareAcrossSeries ? undefined : storyId,
+			seriesId: shareAcrossSeries ? $activeStory!.seriesId : undefined,
 			name: name.trim(),
 			age: age ? Number(age) : null,
 			job: job.trim(),
@@ -78,7 +82,7 @@
 {:else}
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 		{#each sortedCharacters as character (character.id)}
-			<CharacterCard {character} />
+			<CharacterCard {character} {storyId} />
 		{/each}
 	</div>
 {/if}
@@ -121,6 +125,21 @@
 					<option value="minor">Minor</option>
 				</select>
 			</label>
+			{#if $activeStory?.seriesId}
+				<div class="col-span-2 flex flex-col gap-1 text-sm">
+					<span class="text-text-secondary">Appears in</span>
+					<div class="flex gap-4">
+						<label class="flex items-center gap-2">
+							<input type="radio" bind:group={scope} value="book" />
+							This book only
+						</label>
+						<label class="flex items-center gap-2">
+							<input type="radio" bind:group={scope} value="series" />
+							Whole series
+						</label>
+					</div>
+				</div>
+			{/if}
 			<div class="col-span-2 mt-2 flex justify-end gap-2">
 				<Button variant="secondary" onclick={() => (showCreate = false)}>Cancel</Button>
 				<Button type="submit">Create Character</Button>

@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { activeStory } from '$lib/stores/stories';
+	import { seriesList } from '$lib/stores/series';
 
 	interface Props {
 		storyId: string;
 	}
 
 	let { storyId }: Props = $props();
+
+	const series = $derived($seriesList.find((s) => s.id === $activeStory?.seriesId));
 
 	const overviewHref = $derived(resolve('/stories/[storyId]', { storyId }));
 	const settingsHref = $derived(resolve('/stories/[storyId]/settings', { storyId }));
@@ -61,6 +65,14 @@
 <nav
 	class="hidden w-56 shrink-0 flex-col gap-6 border-r border-border bg-surface-raised p-4 md:flex"
 >
+	{#if series}
+		<a
+			href={resolve('/series/[seriesId]', { seriesId: series.id })}
+			class="-mb-3 text-xs font-medium tracking-wide text-text-secondary uppercase hover:text-accent"
+		>
+			{series.title}
+		</a>
+	{/if}
 	<a
 		href={overviewHref}
 		class="font-serif text-lg {page.url.pathname === overviewHref

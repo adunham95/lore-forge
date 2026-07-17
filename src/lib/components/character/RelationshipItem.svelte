@@ -6,10 +6,11 @@
 	interface Props {
 		relationship: CharacterRelationship;
 		target: Character | undefined;
+		storyId: string;
 		onRemove?: () => void;
 	}
 
-	let { relationship, target, onRemove }: Props = $props();
+	let { relationship, target, storyId, onRemove }: Props = $props();
 </script>
 
 <div class="flex items-center gap-3 rounded-md border border-border bg-surface p-3">
@@ -18,7 +19,7 @@
 		<div class="min-w-0 flex-1">
 			<a
 				href={resolve('/stories/[storyId]/characters/[characterId]', {
-					storyId: target.storyId,
+					storyId,
 					characterId: target.id
 				})}
 				class="truncate font-medium hover:text-accent"

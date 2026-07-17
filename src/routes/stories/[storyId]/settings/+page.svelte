@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { activeStory, saveStory, deleteStory } from '$lib/stores/stories';
+	import { activeStory, saveStory, deleteStory, nextSeriesOrder, stories } from '$lib/stores/stories';
+	import { seriesList, loadSeries } from '$lib/stores/series';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import ThemePicker from '$lib/components/story/ThemePicker.svelte';
@@ -11,7 +13,12 @@
 	let synopsis = $state('');
 	let genre = $state('');
 	let theme = $state<StoryTheme | undefined>(undefined);
+	let seriesId = $state('');
 	let initialized = $state(false);
+
+	onMount(() => {
+		loadSeries();
+	});
 
 	$effect(() => {
 		if ($activeStory && !initialized) {
@@ -19,9 +26,20 @@
 			synopsis = $activeStory.synopsis;
 			genre = $activeStory.genre;
 			theme = $activeStory.theme;
+			seriesId = $activeStory.seriesId ?? '';
 			initialized = true;
 		}
 	});
+
+	async function onSeriesChange() {
+		if (!$activeStory) return;
+		await saveStory({
+			...$activeStory,
+			seriesId: seriesId || undefined,
+			seriesOrder: seriesId ? nextSeriesOrder(seriesId, $stories) : undefined,
+			updatedAt: nowIso()
+		});
+	}
 
 	function onThemeChange(next: StoryTheme) {
 		theme = next;
@@ -88,6 +106,31 @@
 		<div class="mt-8 border-t border-border pt-6">
 			<h2 class="mb-3 font-serif text-xl">Theme</h2>
 			<ThemePicker value={theme} onChange={onThemeChange} />
+		</div>
+
+		<div class="mt-8 border-t border-border pt-6">
+			<h2 class="mb-3 font-serif text-xl">Series</h2>
+			<label class="flex flex-col gap-1 text-sm">
+				<span class="text-text-secondary">Part of a series</span>
+				<select
+					bind:value={seriesId}
+					onchange={onSeriesChange}
+					class="rounded-md border border-border bg-surface px-3 py-2"
+				>
+					<option value="">None — standalone story</option>
+					{#each $seriesList as series (series.id)}
+						<option value={series.id}>{series.title}</option>
+					{/each}
+				</select>
+			</label>
+			{#if $activeStory.seriesId}
+				<a
+					href={resolve('/series/[seriesId]', { seriesId: $activeStory.seriesId })}
+					class="mt-2 inline-block text-sm text-accent hover:underline"
+				>
+					View series &rarr;
+				</a>
+			{/if}
 		</div>
 
 		<div class="mt-8 border-t border-border pt-6">

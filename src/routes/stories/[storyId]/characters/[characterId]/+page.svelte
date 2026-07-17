@@ -2,7 +2,14 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { characters, saveCharacter, deleteCharacter } from '$lib/stores/characters';
+	import {
+		characters,
+		saveCharacter,
+		deleteCharacter,
+		shareCharacterAcrossSeries,
+		makeCharacterStoryOnly
+	} from '$lib/stores/characters';
+	import { activeStory } from '$lib/stores/stories';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
@@ -65,6 +72,15 @@
 		});
 	}
 
+	async function toggleSeriesSharing() {
+		if (!character) return;
+		if (character.seriesId) {
+			await makeCharacterStoryOnly(character, storyId);
+		} else if ($activeStory?.seriesId) {
+			await shareCharacterAcrossSeries(character, $activeStory.seriesId);
+		}
+	}
+
 	async function removeCharacter() {
 		if (!character) return;
 		if (confirm(`Delete "${character.name}"?`)) {
@@ -113,6 +129,9 @@
 				<h1 class="font-serif text-3xl">{character.name}</h1>
 				<div class="mt-1 flex items-center gap-2">
 					<Badge variant={character.role}>{character.role}</Badge>
+					{#if character.seriesId}
+						<Badge variant="neutral">Series character</Badge>
+					{/if}
 					{#if character.job}
 						<span class="text-sm text-text-secondary">{character.job}</span>
 					{/if}
@@ -120,6 +139,11 @@
 						<span class="text-sm text-text-secondary">· {character.age}</span>
 					{/if}
 				</div>
+				{#if character.seriesId || $activeStory?.seriesId}
+					<Button variant="ghost" type="button" onclick={toggleSeriesSharing}>
+						{character.seriesId ? 'Make book-only' : 'Share across series'}
+					</Button>
+				{/if}
 			</div>
 		</div>
 
@@ -200,6 +224,7 @@
 						<RelationshipItem
 							{relationship}
 							target={$characters.find((c) => c.id === relationship.targetCharacterId)}
+							{storyId}
 							onRemove={() => removeRelationship(i)}
 						/>
 					{/each}
@@ -212,7 +237,7 @@
 				</h3>
 				<div class="flex flex-col gap-2">
 					{#each relatedBy as { from, relationship } (from.id + relationship.label)}
-						<RelationshipItem {relationship} target={from} />
+						<RelationshipItem {relationship} target={from} {storyId} />
 					{/each}
 				</div>
 			{/if}

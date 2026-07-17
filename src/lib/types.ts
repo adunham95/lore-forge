@@ -19,7 +19,17 @@ export interface Story {
 	synopsis: string;
 	genre: string;
 	theme: StoryTheme;
+	seriesId?: string;
+	seriesOrder?: number; // book position within the series
 	createdAt: string; // ISO 8601
+	updatedAt: string;
+}
+
+export interface Series {
+	id: string;
+	title: string;
+	description: string;
+	createdAt: string;
 	updatedAt: string;
 }
 
@@ -48,7 +58,10 @@ export interface AvatarOptions {
 
 export interface Character {
 	id: string;
-	storyId: string;
+	// Exactly one of these is set: `storyId` for a character that belongs to a
+	// single book, `seriesId` for a character shared across every book in the series.
+	storyId?: string;
+	seriesId?: string;
 
 	name: string;
 	age: number | null;

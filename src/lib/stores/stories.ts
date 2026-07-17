@@ -18,7 +18,9 @@ export async function loadStories() {
 	stories.set(await getAllStories());
 }
 
-export function createStory(input: Pick<Story, 'title' | 'synopsis' | 'genre'>): Story {
+export function createStory(
+	input: Pick<Story, 'title' | 'synopsis' | 'genre'> & Partial<Pick<Story, 'seriesId' | 'seriesOrder'>>
+): Story {
 	const timestamp = nowIso();
 	return {
 		id: newId(),
@@ -26,9 +28,17 @@ export function createStory(input: Pick<Story, 'title' | 'synopsis' | 'genre'>):
 		synopsis: input.synopsis,
 		genre: input.genre,
 		theme: defaultTheme(),
+		seriesId: input.seriesId,
+		seriesOrder: input.seriesOrder,
 		createdAt: timestamp,
 		updatedAt: timestamp
 	};
+}
+
+/** Next free book position for a series, based on the highest existing `seriesOrder`. */
+export function nextSeriesOrder(seriesId: string, allStories: Story[]): number {
+	const inSeries = allStories.filter((s) => s.seriesId === seriesId);
+	return inSeries.length === 0 ? 0 : Math.max(...inSeries.map((s) => s.seriesOrder ?? 0)) + 1;
 }
 
 export async function saveStory(story: Story) {

@@ -2,7 +2,9 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { get } from 'svelte/store';
 	import { loadStories, activeStoryId, activeStory } from '$lib/stores/stories';
+	import { loadSeries } from '$lib/stores/series';
 	import { loadCharacters } from '$lib/stores/characters';
 	import { loadLocations } from '$lib/stores/locations';
 	import { loadObjects } from '$lib/stores/objects';
@@ -27,8 +29,10 @@
 		activeStoryId.set(id);
 		(async () => {
 			await loadStories();
+			const story = get(activeStory);
 			await Promise.all([
-				loadCharacters(id),
+				loadSeries(),
+				...(story ? [loadCharacters(story)] : []),
 				loadLocations(id),
 				loadObjects(id),
 				loadLore(id),

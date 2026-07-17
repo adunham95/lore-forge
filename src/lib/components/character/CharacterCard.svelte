@@ -6,12 +6,13 @@
 
 	interface Props {
 		character: Character;
+		storyId: string;
 	}
 
-	let { character }: Props = $props();
+	let { character, storyId }: Props = $props();
 	let href = $derived(
 		resolve('/stories/[storyId]/characters/[characterId]', {
-			storyId: character.storyId,
+			storyId,
 			characterId: character.id
 		})
 	);
@@ -28,5 +29,8 @@
 			<p class="truncate text-xs text-text-secondary">{character.job}</p>
 		{/if}
 	</div>
+	{#if character.seriesId}
+		<Badge variant="neutral">Series</Badge>
+	{/if}
 	<Badge variant={character.role}>{character.role}</Badge>
 </a>
