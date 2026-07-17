@@ -1,0 +1,95 @@
+/* 1. Google Fonts — must precede all other @import/rules */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap');
+
+/* 2. Import Tailwind v4 */
+@import 'tailwindcss';
+
+/* 3. Plugins */
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* 4. Dark mode — class strategy (.dark on <html>) */
+@variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────
+   5. Design tokens
+   @theme registers tokens as Tailwind utility classes.
+   --color-accent generates bg-accent, text-accent, etc.
+   ───────────────────────────────────────────────────── */
+@theme {
+	--font-serif: 'Crimson Pro', Georgia, serif;
+	--font-sans: 'Inter', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', monospace;
+
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 12px;
+	--radius-xl: 16px;
+	--radius-full: 9999px;
+
+	--color-accent: var(--accent);
+	--color-accent-soft: var(--accent-soft);
+	--color-accent-text: var(--accent-text);
+	--color-surface: var(--surface);
+	--color-surface-raised: var(--surface-raised);
+	--color-border: var(--border);
+	--color-text-primary: var(--text-primary);
+	--color-text-secondary: var(--text-secondary);
+	--color-text-disabled: var(--text-disabled);
+	--color-danger: var(--danger);
+	--color-success: var(--success);
+	--color-bg: var(--bg);
+}
+
+/* ─────────────────────────────────────────────────────
+   6. Base palette — light mode defaults
+   Raw CSS vars (outside @theme) so they are NOT exposed
+   as utilities — only the aliases above are.
+   ───────────────────────────────────────────────────── */
+:root {
+	--bg: #f7f5f2;
+	--surface: #ffffff;
+	--surface-raised: #efede9;
+	--border: #ddd9d3;
+	--text-primary: #1a1814;
+	--text-secondary: #6b6760;
+	--text-disabled: #b0ada8;
+	--danger: #c0392b;
+	--success: #2e7d5e;
+
+	/* Default accent = Forest preset, light mode.
+	   Overridden per-story by the story shell layout (see branding.md §7.3). */
+	--accent: #2d6a4f;
+	--accent-soft: #d1eae0;
+	--accent-text: #ffffff;
+}
+
+/* 7. Dark mode — applied when .dark is on <html> */
+.dark {
+	--bg: #141210;
+	--surface: #1e1c19;
+	--surface-raised: #272420;
+	--border: #333028;
+	--text-primary: #f0ede8;
+	--text-secondary: #8c8880;
+	--text-disabled: #4a4843;
+
+	/* Default accent — Forest preset, dark mode */
+	--accent: #74c69d;
+	--accent-soft: #1a3d2e;
+	--accent-text: #0d1f17;
+}
+
+/* 8. Prose / Markdown preview */
+.prose {
+	--tw-prose-body: var(--text-primary);
+	--tw-prose-headings: var(--text-primary);
+	font-family: var(--font-serif);
+	font-size: 1.125rem;
+	line-height: 1.8;
+}
+
+body {
+	background-color: var(--color-bg);
+	color: var(--color-text-primary);
+}

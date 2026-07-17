@@ -1,0 +1,128 @@
+// Core entity types — see tech-design.md §3
+
+export type StoryThemePreset = 'crimson' | 'ocean' | 'forest' | 'dusk' | 'ember' | 'slate';
+
+export interface StoryTheme {
+	preset: StoryThemePreset | 'custom';
+	// If preset is 'custom', the values below are used directly.
+	// If a named preset is selected, these are derived from it at render time.
+	accentLight: string;
+	accentDark: string;
+	accentSoft: string;
+	accentSoftDark: string;
+	accentText: string;
+}
+
+export interface Story {
+	id: string;
+	title: string;
+	synopsis: string;
+	genre: string;
+	theme: StoryTheme;
+	createdAt: string; // ISO 8601
+	updatedAt: string;
+}
+
+export type CharacterRole = 'protagonist' | 'antagonist' | 'supporting' | 'minor';
+
+export interface CharacterRelationship {
+	targetCharacterId: string;
+	label: string;
+	description: string;
+}
+
+export interface AvatarOptions {
+	seed: string;
+	skinColor: string;
+	hairStyle: string;
+	hairColor: string;
+	facialHairStyle: string; // or "none"
+	eyeStyle: string;
+	eyebrowStyle: string;
+	mouthStyle: string;
+	clothingStyle: string;
+	clothingColor: string;
+	accessoryStyle: string; // or "none"
+	backgroundColor: string;
+}
+
+export interface Character {
+	id: string;
+	storyId: string;
+
+	name: string;
+	age: number | null;
+	job: string;
+	role: CharacterRole;
+
+	appearance: string;
+	personality: string;
+	notes: string; // Markdown
+
+	avatar: AvatarOptions;
+
+	relationships: CharacterRelationship[];
+
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface Location {
+	id: string;
+	storyId: string;
+	name: string;
+	type: string;
+	description: string;
+	notes: string; // Markdown
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface StoryObject {
+	id: string;
+	storyId: string;
+	name: string;
+	type: string; // free text: "Ship", "Weapon", "Artifact", etc.
+	description: string;
+	notes: string; // Markdown
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface LoreEntry {
+	id: string;
+	storyId: string;
+	title: string;
+	category: string;
+	content: string; // Markdown
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface Chapter {
+	id: string;
+	storyId: string;
+	title: string;
+	order: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface Scene {
+	id: string;
+	storyId: string;
+	chapterId: string;
+	title: string;
+	content: string; // Markdown
+	characterIds: string[];
+	locationId: string | null;
+	objectIds: string[];
+	order: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface AppSettings {
+	darkMode: boolean;
+	editorFontSize: number; // px, default 16
+}

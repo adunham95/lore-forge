@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#2D6A4F"/>
+
+  <!-- quill, rising from the anvil's horn like it's being forged -->
+  <polygon points="214,250 358,140 380,153" fill="#F7F5F2"/>
+
+  <!-- anvil silhouette -->
+  <g fill="#F7F5F2">
+    <path d="M120 246 L206 220 L366 220 L392 246 L338 268 L206 268 Z"/>
+    <path d="M246 268 L298 268 L288 316 L256 316 Z"/>
+    <rect x="196" y="316" width="120" height="30" rx="6"/>
+  </g>
+</svg>
