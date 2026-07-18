@@ -7,6 +7,7 @@
 	import { focusMode } from '$lib/stores/focus';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import PwaUpdateToast from '$lib/components/layout/PwaUpdateToast.svelte';
+	import ToastStack from '$lib/components/layout/ToastStack.svelte';
 
 	let { children } = $props();
 	let ready = $state(false);
@@ -33,6 +34,7 @@
 </svelte:head>
 
 <PwaUpdateToast />
+<ToastStack />
 
 <div class="min-h-screen bg-bg text-text-primary">
 	{#if !$focusMode}

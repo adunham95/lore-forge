@@ -12,6 +12,7 @@
 	} from '$lib/db';
 	import { saveSeries, deleteSeries } from '$lib/stores/series';
 	import { createStory, saveStory, deleteStory, nextSeriesOrder } from '$lib/stores/stories';
+	import { showToast } from '$lib/stores/toast';
 	import { byOrder, byUpdatedDesc } from '$lib/utils/sort';
 	import { defaultTheme } from '$lib/utils/theme';
 	import { nowIso } from '$lib/utils/date';
@@ -24,7 +25,15 @@
 	import ObjectCard from '$lib/components/object/ObjectCard.svelte';
 	import LoreCard from '$lib/components/lore/LoreCard.svelte';
 	import ThemePicker from '$lib/components/story/ThemePicker.svelte';
-	import type { Series, Story, Character, Location, StoryObject, LoreEntry, StoryTheme } from '$lib/types';
+	import type {
+		Series,
+		Story,
+		Character,
+		Location,
+		StoryObject,
+		LoreEntry,
+		StoryTheme
+	} from '$lib/types';
 
 	const seriesId = $derived(page.params.seriesId as string);
 
@@ -91,6 +100,7 @@
 			updatedAt: nowIso()
 		});
 		await refresh();
+		showToast('Series saved');
 	}
 
 	async function removeSeries() {
@@ -139,7 +149,10 @@
 
 {#if ready && series}
 	<div class="mx-auto max-w-3xl px-6 py-10">
-		<a href={resolve('/')} class="mb-4 inline-block text-sm text-text-secondary hover:text-text-primary">
+		<a
+			href={resolve('/')}
+			class="mb-4 inline-block text-sm text-text-secondary hover:text-text-primary"
+		>
 			&larr; Your Stories
 		</a>
 
@@ -174,8 +187,8 @@
 			</p>
 			{#if sortedCharacters.length === 0}
 				<p class="mt-3 text-sm text-text-secondary">
-					No shared characters yet — mark a character "Whole series" from within any book to add
-					one here.
+					No shared characters yet — mark a character "Whole series" from within any book to add one
+					here.
 				</p>
 			{:else if anchorStoryId}
 				<div class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -207,7 +220,9 @@
 
 		<div class="mt-8">
 			<h2 class="font-serif text-xl">Shared Objects</h2>
-			<p class="text-sm text-text-secondary">These objects carry across every book in the series.</p>
+			<p class="text-sm text-text-secondary">
+				These objects carry across every book in the series.
+			</p>
 			{#if sortedObjects.length === 0}
 				<p class="mt-3 text-sm text-text-secondary">
 					No shared objects yet — mark an object "Whole series" from within any book to add one

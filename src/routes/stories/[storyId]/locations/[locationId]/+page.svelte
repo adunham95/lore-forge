@@ -10,6 +10,7 @@
 		makeLocationStoryOnly
 	} from '$lib/stores/locations';
 	import { activeStory } from '$lib/stores/stories';
+	import { showToast } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
@@ -46,6 +47,7 @@
 			notes,
 			updatedAt: nowIso()
 		});
+		showToast('Location saved');
 	}
 
 	async function toggleSeriesSharing() {

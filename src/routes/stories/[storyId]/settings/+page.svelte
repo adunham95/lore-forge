@@ -2,8 +2,15 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { activeStory, saveStory, deleteStory, nextSeriesOrder, stories } from '$lib/stores/stories';
+	import {
+		activeStory,
+		saveStory,
+		deleteStory,
+		nextSeriesOrder,
+		stories
+	} from '$lib/stores/stories';
 	import { seriesList, loadSeries } from '$lib/stores/series';
+	import { showToast } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import ThemePicker from '$lib/components/story/ThemePicker.svelte';
@@ -57,6 +64,7 @@
 			theme,
 			updatedAt: nowIso()
 		});
+		showToast('Story settings saved');
 	}
 
 	async function removeStory() {
