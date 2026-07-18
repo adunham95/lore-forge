@@ -11,6 +11,7 @@
 	import { loadLore } from '$lib/stores/lore';
 	import { loadChapters } from '$lib/stores/chapters';
 	import { loadScenesByStory } from '$lib/stores/scenes';
+	import { loadOutline } from '$lib/stores/outline';
 	import { settings } from '$lib/stores/settings';
 	import { focusMode } from '$lib/stores/focus';
 	import { resolveTheme } from '$lib/utils/theme';
@@ -36,7 +37,8 @@
 					? [loadCharacters(story), loadLocations(story), loadObjects(story), loadLore(story)]
 					: []),
 				loadChapters(id),
-				loadScenesByStory(id)
+				loadScenesByStory(id),
+				loadOutline(id)
 			]);
 			ready = true;
 		})();

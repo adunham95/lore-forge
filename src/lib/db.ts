@@ -8,6 +8,7 @@ import type {
 	LoreEntry,
 	Chapter,
 	Scene,
+	StoryOutline,
 	AppSettings
 } from './types';
 
@@ -36,10 +37,11 @@ interface SwbSchema extends DBSchema {
 		value: Scene;
 		indexes: { 'by-story': string; 'by-chapter': string };
 	};
+	outlines: { key: string; value: StoryOutline };
 	settings: { key: string; value: AppSettings };
 }
 
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 
 let _db: IDBPDatabase<SwbSchema> | undefined;
 
@@ -96,6 +98,11 @@ export async function getDb(): Promise<IDBPDatabase<SwbSchema>> {
 				const lore = transaction.objectStore('lore');
 				if (!lore.indexNames.contains('by-series')) {
 					lore.createIndex('by-series', 'seriesId');
+				}
+			}
+			if (oldVersion < 6) {
+				if (!db.objectStoreNames.contains('outlines')) {
+					db.createObjectStore('outlines', { keyPath: 'storyId' });
 				}
 			}
 		}
@@ -204,15 +211,20 @@ export async function getScenesByChapter(chapterId: string): Promise<Scene[]> {
 	return (await getDb()).getAllFromIndex('scenes', 'by-chapter', chapterId);
 }
 
+export async function getOutline(storyId: string): Promise<StoryOutline | undefined> {
+	return (await getDb()).get('outlines', storyId);
+}
+
+export async function saveOutline(outline: StoryOutline): Promise<void> {
+	await (await getDb()).put('outlines', JSON.parse(JSON.stringify(outline)));
+}
+
+export async function deleteOutline(storyId: string): Promise<void> {
+	await (await getDb()).delete('outlines', storyId);
+}
+
 type EntityStore =
-	| 'stories'
-	| 'series'
-	| 'characters'
-	| 'locations'
-	| 'objects'
-	| 'lore'
-	| 'chapters'
-	| 'scenes';
+	'stories' | 'series' | 'characters' | 'locations' | 'objects' | 'lore' | 'chapters' | 'scenes';
 
 export async function save<S extends EntityStore>(
 	store: S,
@@ -261,7 +273,7 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 	}
 
 	const tx = db.transaction(
-		['stories', 'characters', 'locations', 'objects', 'lore', 'chapters', 'scenes'],
+		['stories', 'characters', 'locations', 'objects', 'lore', 'chapters', 'scenes', 'outlines'],
 		'readwrite'
 	);
 
@@ -285,7 +297,8 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 		...lore.map((key) => tx.objectStore('lore').delete(key)),
 		...orphanedSharedLoreKeys.map((key) => tx.objectStore('lore').delete(key)),
 		...chapters.map((key) => tx.objectStore('chapters').delete(key)),
-		...scenes.map((key) => tx.objectStore('scenes').delete(key))
+		...scenes.map((key) => tx.objectStore('scenes').delete(key)),
+		tx.objectStore('outlines').delete(storyId)
 	]);
 
 	await tx.done;
@@ -314,9 +327,7 @@ export async function removeSeriesCascade(seriesId: string): Promise<void> {
 		]);
 
 	const seriesStories = allStories.filter((s) => s.seriesId === seriesId);
-	const anchor = [...seriesStories].sort(
-		(a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0)
-	)[0];
+	const anchor = [...seriesStories].sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0))[0];
 
 	await Promise.all([
 		tx.objectStore('series').delete(seriesId),

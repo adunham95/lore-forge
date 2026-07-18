@@ -8,7 +8,9 @@
 	import { lore } from '$lib/stores/lore';
 	import { chapters } from '$lib/stores/chapters';
 	import { scenes } from '$lib/stores/scenes';
+	import { outline } from '$lib/stores/outline';
 	import ContinueWritingCard from '$lib/components/story/ContinueWritingCard.svelte';
+	import StartOutlineCard from '$lib/components/story/StartOutlineCard.svelte';
 
 	const storyId = $derived(page.params.storyId as string);
 
@@ -59,7 +61,11 @@
 		{/if}
 
 		<div class="mt-8">
-			<ContinueWritingCard />
+			{#if $scenes.length === 0 && !$outline}
+				<StartOutlineCard />
+			{:else}
+				<ContinueWritingCard />
+			{/if}
 		</div>
 
 		<div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">

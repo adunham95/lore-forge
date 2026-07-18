@@ -133,6 +133,7 @@ export interface Chapter {
 
 export interface OutlineTemplateAct {
 	name: string;
+	guidance: string; // prompt shown in the outline wizard, e.g. "Who is your hero, and what call disrupts their world?"
 	chapters: string[];
 }
 
@@ -141,6 +142,21 @@ export interface OutlineTemplate {
 	name: string;
 	description: string;
 	acts: OutlineTemplateAct[];
+}
+
+export interface StoryOutlineAct {
+	name: string;
+	guidance: string;
+	description: string; // the user's own write-up of what happens in this act
+}
+
+export interface StoryOutline {
+	storyId: string; // one outline per story; also its IDB key
+	templateId: string;
+	templateName: string;
+	acts: StoryOutlineAct[];
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface SceneMetadataField {

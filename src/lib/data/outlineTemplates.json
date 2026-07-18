@@ -6,6 +6,7 @@
 		"acts": [
 			{
 				"name": "Act 1 - Departure",
+				"guidance": "The hero's ordinary life, the call that disrupts it, and the choice to cross into the unknown. What does your protagonist's world look like before everything changes, and what pulls them out of it?",
 				"chapters": [
 					"The Ordinary World",
 					"Call to Adventure",
@@ -16,6 +17,7 @@
 			},
 			{
 				"name": "Act 2 - Descent and Initiation",
+				"guidance": "The hero is tested in an unfamiliar world by allies, enemies, and a central ordeal that forces them to change. What trials do they face, and what do they nearly lose?",
 				"chapters": [
 					"Tests, Allies, and Enemies",
 					"Approach to the Inmost Cave",
@@ -25,6 +27,7 @@
 			},
 			{
 				"name": "Act 3 - Return and Reintegration",
+				"guidance": "The hero carries what they've won back to where they started, transformed by the journey. How do they return, and what do they bring back with them?",
 				"chapters": ["The Road Back", "Resurrection", "Return with the Elixir"]
 			}
 		]
@@ -36,14 +39,17 @@
 		"acts": [
 			{
 				"name": "Act 1 - Setup",
+				"guidance": "Introduce your protagonist, their world, and the event that kicks the story into motion. What's normal life, and what breaks it?",
 				"chapters": ["Opening Image", "Inciting Incident", "Plot Point One"]
 			},
 			{
 				"name": "Act 2 - Confrontation",
+				"guidance": "Your protagonist pursues their goal against mounting obstacles, hitting a midpoint that raises the stakes. What stands in their way, and how do things get worse before they get better?",
 				"chapters": ["Rising Action", "Midpoint", "Complications", "Plot Point Two"]
 			},
 			{
 				"name": "Act 3 - Resolution",
+				"guidance": "The conflict comes to a head and resolves. How does the story's central question get answered, and where do your characters land?",
 				"chapters": ["Climax", "Falling Action", "Denouement"]
 			}
 		]
@@ -55,6 +61,7 @@
 		"acts": [
 			{
 				"name": "Act 1",
+				"guidance": "Establish your hero's flawed status quo, state the story's theme, and hit them with a catalyst that breaks into a new world. What do they believe at the start, and what event forces a decision?",
 				"chapters": [
 					"Opening Image",
 					"Theme Stated",
@@ -66,6 +73,7 @@
 			},
 			{
 				"name": "Act 2",
+				"guidance": "Your hero explores the new world, develops a B story, and hits a midpoint before things fall apart completely. What do they gain, then lose, and what's their darkest moment?",
 				"chapters": [
 					"B Story",
 					"Fun and Games",
@@ -78,6 +86,7 @@
 			},
 			{
 				"name": "Act 3",
+				"guidance": "Armed with what they've learned, your hero executes a plan to resolve the A and B stories. How do they prove they've changed, and how does it all wrap up?",
 				"chapters": ["Finale", "Final Image"]
 			}
 		]
@@ -89,22 +98,27 @@
 		"acts": [
 			{
 				"name": "Exposition",
+				"guidance": "Establish the world, characters, and status quo before the story's central conflict ignites. What do we need to know, and what event disrupts it?",
 				"chapters": ["Introduction", "Inciting Incident"]
 			},
 			{
 				"name": "Rising Action",
+				"guidance": "A sequence of complications that build tension and raise the stakes toward the climax. What obstacles pile up, and how does the pressure mount?",
 				"chapters": ["Rising Action I", "Rising Action II", "Rising Action III"]
 			},
 			{
 				"name": "Climax",
+				"guidance": "The turning point — the moment of highest tension, where the outcome hangs in the balance. What's the decisive confrontation or choice?",
 				"chapters": ["Climax"]
 			},
 			{
 				"name": "Falling Action",
+				"guidance": "The immediate consequences of the climax begin to unfold. What's the fallout, and how do things start to settle?",
 				"chapters": ["Falling Action I", "Falling Action II"]
 			},
 			{
 				"name": "Denouement",
+				"guidance": "Loose ends resolve and the story reaches its new equilibrium. Where do your characters end up?",
 				"chapters": ["Resolution"]
 			}
 		]
@@ -116,10 +130,12 @@
 		"acts": [
 			{
 				"name": "Descent",
+				"guidance": "Your character leaves their comfort zone in pursuit of a need, searching an unfamiliar situation. What do they want, and what do they find when they go looking?",
 				"chapters": ["You (Comfort Zone)", "Need", "Go", "Search"]
 			},
 			{
 				"name": "Ascent",
+				"guidance": "Having paid a price, your character takes what they found and returns home changed. What do they take, and how are they different for it?",
 				"chapters": ["Find", "Take", "Return", "Change"]
 			}
 		]
@@ -131,18 +147,22 @@
 		"acts": [
 			{
 				"name": "12:00 to 3:00 - Setup",
+				"guidance": "Establish the ordinary world, introduce the cast, and trigger the inciting incident. Who are we following, and what sets things in motion?",
 				"chapters": ["12:00 - Ordinary World", "1:00 - Introduce Cast", "2:00 - Inciting Incident"]
 			},
 			{
 				"name": "3:00 to 6:00 - Rising Action",
+				"guidance": "Your protagonist commits to the new situation and meets their first real obstacles. What changes once they're in motion, and what pushes back?",
 				"chapters": ["3:00 - Turn Into Act Two", "4:00 - New Situation", "5:00 - First Obstacles"]
 			},
 			{
 				"name": "6:00 to 9:00 - Complications",
+				"guidance": "The midpoint shifts the story's direction, stakes rise, and a major setback tests your protagonist. What goes wrong, and how does it change the stakes?",
 				"chapters": ["6:00 - Midpoint", "7:00 - Raising Stakes", "8:00 - Major Setback"]
 			},
 			{
 				"name": "9:00 to 12:00 - Resolution",
+				"guidance": "The story turns toward its climax and resolves. How does everything come to a head, and what's left once the dust settles?",
 				"chapters": ["9:00 - Turn Into Act Three", "10:00 - Climax", "11:00 - Falling Action"]
 			}
 		]
