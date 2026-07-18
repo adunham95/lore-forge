@@ -1,4 +1,4 @@
-import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
+import Dexie, { type EntityTable, type Table } from 'dexie';
 import type {
 	Story,
 	Series,
@@ -13,137 +13,95 @@ import type {
 	AppSettings
 } from './types';
 
-interface SwbSchema extends DBSchema {
-	stories: { key: string; value: Story };
-	series: { key: string; value: Series };
-	characters: {
-		key: string;
-		value: Character;
-		indexes: { 'by-story': string; 'by-series': string };
-	};
-	locations: {
-		key: string;
-		value: Location;
-		indexes: { 'by-story': string; 'by-series': string };
-	};
-	objects: {
-		key: string;
-		value: StoryObject;
-		indexes: { 'by-story': string; 'by-series': string };
-	};
-	lore: { key: string; value: LoreEntry; indexes: { 'by-story': string; 'by-series': string } };
-	chapters: { key: string; value: Chapter; indexes: { 'by-story': string } };
-	scenes: {
-		key: string;
-		value: Scene;
-		indexes: { 'by-story': string; 'by-chapter': string };
-	};
-	outlines: { key: string; value: StoryOutline };
-	prompts: { key: string; value: WritingPrompt };
-	settings: { key: string; value: AppSettings };
+class SwbDatabase extends Dexie {
+	stories!: EntityTable<Story, 'id'>;
+	series!: EntityTable<Series, 'id'>;
+	characters!: EntityTable<Character, 'id'>;
+	locations!: EntityTable<Location, 'id'>;
+	objects!: EntityTable<StoryObject, 'id'>;
+	lore!: EntityTable<LoreEntry, 'id'>;
+	chapters!: EntityTable<Chapter, 'id'>;
+	scenes!: EntityTable<Scene, 'id'>;
+	outlines!: EntityTable<StoryOutline, 'storyId'>;
+	prompts!: EntityTable<WritingPrompt, 'id'>;
+	settings!: Table<AppSettings, string>;
+
+	constructor() {
+		super('swb-db');
+
+		// Each version below only declares what changed at that step — Dexie carries
+		// forward everything else from the prior version automatically. This mirrors
+		// the `if (oldVersion < N)` branches of the old idb-based upgrade() function,
+		// version number for version number (there was never a shipped v3 — see the
+		// v4 note below).
+		this.version(1).stores({
+			stories: 'id',
+			characters: 'id, storyId',
+			locations: 'id, storyId',
+			lore: 'id, storyId',
+			chapters: 'id, storyId',
+			scenes: 'id, storyId, chapterId',
+			settings: ''
+		});
+
+		this.version(2).stores({
+			objects: 'id, storyId'
+		});
+
+		// An in-development build briefly shipped an incomplete version-3 migration,
+		// so a browser upgrading from that state may already have a partial 'series'
+		// store. If that ever throws a ConstraintError in practice, it needs an
+		// explicit version(3) step to reconcile — not hit in testing so far.
+		this.version(4).stores({
+			series: 'id',
+			characters: 'id, storyId, seriesId'
+		});
+
+		this.version(5).stores({
+			locations: 'id, storyId, seriesId',
+			objects: 'id, storyId, seriesId',
+			lore: 'id, storyId, seriesId'
+		});
+
+		this.version(6).stores({
+			outlines: 'storyId'
+		});
+
+		this.version(7).stores({
+			prompts: 'id'
+		});
+	}
 }
 
-const DB_VERSION = 7;
-
-let _db: IDBPDatabase<SwbSchema> | undefined;
-
-export async function getDb(): Promise<IDBPDatabase<SwbSchema>> {
-	if (_db) return _db;
-	_db = await openDB<SwbSchema>('swb-db', DB_VERSION, {
-		upgrade(db, oldVersion, _newVersion, transaction) {
-			if (oldVersion < 1) {
-				db.createObjectStore('stories', { keyPath: 'id' });
-
-				const chars = db.createObjectStore('characters', { keyPath: 'id' });
-				chars.createIndex('by-story', 'storyId');
-
-				const locs = db.createObjectStore('locations', { keyPath: 'id' });
-				locs.createIndex('by-story', 'storyId');
-
-				const lore = db.createObjectStore('lore', { keyPath: 'id' });
-				lore.createIndex('by-story', 'storyId');
-
-				const chapters = db.createObjectStore('chapters', { keyPath: 'id' });
-				chapters.createIndex('by-story', 'storyId');
-
-				const scenes = db.createObjectStore('scenes', { keyPath: 'id' });
-				scenes.createIndex('by-story', 'storyId');
-				scenes.createIndex('by-chapter', 'chapterId');
-
-				db.createObjectStore('settings');
-			}
-			if (oldVersion < 2) {
-				const objects = db.createObjectStore('objects', { keyPath: 'id' });
-				objects.createIndex('by-story', 'storyId');
-			}
-			if (oldVersion < 4) {
-				// Guarded existence checks: an in-development build briefly shipped an
-				// incomplete version-3 migration, so some browsers may already have
-				// partial state here.
-				if (!db.objectStoreNames.contains('series')) {
-					db.createObjectStore('series', { keyPath: 'id' });
-				}
-				const chars = transaction.objectStore('characters');
-				if (!chars.indexNames.contains('by-series')) {
-					chars.createIndex('by-series', 'seriesId');
-				}
-			}
-			if (oldVersion < 5) {
-				const locs = transaction.objectStore('locations');
-				if (!locs.indexNames.contains('by-series')) {
-					locs.createIndex('by-series', 'seriesId');
-				}
-				const objects = transaction.objectStore('objects');
-				if (!objects.indexNames.contains('by-series')) {
-					objects.createIndex('by-series', 'seriesId');
-				}
-				const lore = transaction.objectStore('lore');
-				if (!lore.indexNames.contains('by-series')) {
-					lore.createIndex('by-series', 'seriesId');
-				}
-			}
-			if (oldVersion < 6) {
-				if (!db.objectStoreNames.contains('outlines')) {
-					db.createObjectStore('outlines', { keyPath: 'storyId' });
-				}
-			}
-			if (oldVersion < 7) {
-				if (!db.objectStoreNames.contains('prompts')) {
-					db.createObjectStore('prompts', { keyPath: 'id' });
-				}
-			}
-		}
-	});
-	return _db;
-}
+const db = new SwbDatabase();
 
 export async function getAllStories(): Promise<Story[]> {
-	return (await getDb()).getAll('stories');
+	return db.stories.toArray();
 }
 
 export async function getStory(id: string): Promise<Story | undefined> {
-	return (await getDb()).get('stories', id);
+	return db.stories.get(id);
 }
 
 export async function getAllSeries(): Promise<Series[]> {
-	return (await getDb()).getAll('series');
+	return db.series.toArray();
 }
 
 export async function getSeries(id: string): Promise<Series | undefined> {
-	return (await getDb()).get('series', id);
+	return db.series.get(id);
 }
 
 export async function getStoriesBySeries(seriesId: string): Promise<Story[]> {
-	const all = await (await getDb()).getAll('stories');
+	const all = await db.stories.toArray();
 	return all.filter((s) => s.seriesId === seriesId);
 }
 
 export async function getCharactersByStory(storyId: string): Promise<Character[]> {
-	return (await getDb()).getAllFromIndex('characters', 'by-story', storyId);
+	return db.characters.where('storyId').equals(storyId).toArray();
 }
 
 export async function getCharactersBySeries(seriesId: string): Promise<Character[]> {
-	return (await getDb()).getAllFromIndex('characters', 'by-series', seriesId);
+	return db.characters.where('seriesId').equals(seriesId).toArray();
 }
 
 /** Characters that live in this story, plus any shared across its series (if it has one). */
@@ -156,11 +114,11 @@ export async function getCharactersForStory(story: Story): Promise<Character[]> 
 }
 
 export async function getLocationsByStory(storyId: string): Promise<Location[]> {
-	return (await getDb()).getAllFromIndex('locations', 'by-story', storyId);
+	return db.locations.where('storyId').equals(storyId).toArray();
 }
 
 export async function getLocationsBySeries(seriesId: string): Promise<Location[]> {
-	return (await getDb()).getAllFromIndex('locations', 'by-series', seriesId);
+	return db.locations.where('seriesId').equals(seriesId).toArray();
 }
 
 /** Locations that live in this story, plus any shared across its series. */
@@ -173,11 +131,11 @@ export async function getLocationsForStory(story: Story): Promise<Location[]> {
 }
 
 export async function getObjectsByStory(storyId: string): Promise<StoryObject[]> {
-	return (await getDb()).getAllFromIndex('objects', 'by-story', storyId);
+	return db.objects.where('storyId').equals(storyId).toArray();
 }
 
 export async function getObjectsBySeries(seriesId: string): Promise<StoryObject[]> {
-	return (await getDb()).getAllFromIndex('objects', 'by-series', seriesId);
+	return db.objects.where('seriesId').equals(seriesId).toArray();
 }
 
 /** Objects that live in this story, plus any shared across its series. */
@@ -190,11 +148,11 @@ export async function getObjectsForStory(story: Story): Promise<StoryObject[]> {
 }
 
 export async function getLoreByStory(storyId: string): Promise<LoreEntry[]> {
-	return (await getDb()).getAllFromIndex('lore', 'by-story', storyId);
+	return db.lore.where('storyId').equals(storyId).toArray();
 }
 
 export async function getLoreBySeries(seriesId: string): Promise<LoreEntry[]> {
-	return (await getDb()).getAllFromIndex('lore', 'by-series', seriesId);
+	return db.lore.where('seriesId').equals(seriesId).toArray();
 }
 
 /** Lore entries that live in this story, plus any shared across its series. */
@@ -207,55 +165,58 @@ export async function getLoreForStory(story: Story): Promise<LoreEntry[]> {
 }
 
 export async function getChaptersByStory(storyId: string): Promise<Chapter[]> {
-	return (await getDb()).getAllFromIndex('chapters', 'by-story', storyId);
+	return db.chapters.where('storyId').equals(storyId).toArray();
 }
 
 export async function getScenesByStory(storyId: string): Promise<Scene[]> {
-	return (await getDb()).getAllFromIndex('scenes', 'by-story', storyId);
+	return db.scenes.where('storyId').equals(storyId).toArray();
 }
 
 export async function getScenesByChapter(chapterId: string): Promise<Scene[]> {
-	return (await getDb()).getAllFromIndex('scenes', 'by-chapter', chapterId);
+	return db.scenes.where('chapterId').equals(chapterId).toArray();
 }
 
 export async function getOutline(storyId: string): Promise<StoryOutline | undefined> {
-	return (await getDb()).get('outlines', storyId);
+	return db.outlines.get(storyId);
 }
 
 export async function saveOutline(outline: StoryOutline): Promise<void> {
-	await (await getDb()).put('outlines', JSON.parse(JSON.stringify(outline)));
+	await db.outlines.put(JSON.parse(JSON.stringify(outline)));
 }
 
 export async function deleteOutline(storyId: string): Promise<void> {
-	await (await getDb()).delete('outlines', storyId);
+	await db.outlines.delete(storyId);
 }
 
 export async function getAllPrompts(): Promise<WritingPrompt[]> {
-	return (await getDb()).getAll('prompts');
+	return db.prompts.toArray();
 }
 
-type EntityStore =
-	| 'stories'
-	| 'series'
-	| 'characters'
-	| 'locations'
-	| 'objects'
-	| 'lore'
-	| 'chapters'
-	| 'scenes'
-	| 'prompts';
+interface EntityValueMap {
+	stories: Story;
+	series: Series;
+	characters: Character;
+	locations: Location;
+	objects: StoryObject;
+	lore: LoreEntry;
+	chapters: Chapter;
+	scenes: Scene;
+	prompts: WritingPrompt;
+}
+
+type EntityStore = keyof EntityValueMap;
 
 export async function save<S extends EntityStore>(
 	store: S,
-	value: SwbSchema[S]['value']
+	value: EntityValueMap[S]
 ): Promise<void> {
 	// Svelte 5 `$state` objects are Proxy-wrapped, which IndexedDB's structured
 	// clone algorithm rejects — round-tripping through JSON yields a plain object.
-	await (await getDb()).put(store, JSON.parse(JSON.stringify(value)));
+	await db.table(store).put(JSON.parse(JSON.stringify(value)));
 }
 
 export async function remove(store: EntityStore, id: string): Promise<void> {
-	await (await getDb()).delete(store, id);
+	await db.table(store).delete(id);
 }
 
 /**
@@ -265,15 +226,14 @@ export async function remove(store: EntityStore, id: string): Promise<void> {
  * have no other book to live in and are deleted along with it.
  */
 export async function removeStoryCascade(storyId: string): Promise<void> {
-	const db = await getDb();
-	const target = await db.get('stories', storyId);
+	const target = await db.stories.get(storyId);
 
 	let orphanedSharedCharacterKeys: string[] = [];
 	let orphanedSharedLocationKeys: string[] = [];
 	let orphanedSharedObjectKeys: string[] = [];
 	let orphanedSharedLoreKeys: string[] = [];
 	if (target?.seriesId) {
-		const siblings = (await db.getAll('stories')).filter(
+		const siblings = (await db.stories.toArray()).filter(
 			(s) => s.seriesId === target.seriesId && s.id !== storyId
 		);
 		if (siblings.length === 0) {
@@ -283,44 +243,40 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 				orphanedSharedObjectKeys,
 				orphanedSharedLoreKeys
 			] = await Promise.all([
-				db.getAllKeysFromIndex('characters', 'by-series', target.seriesId),
-				db.getAllKeysFromIndex('locations', 'by-series', target.seriesId),
-				db.getAllKeysFromIndex('objects', 'by-series', target.seriesId),
-				db.getAllKeysFromIndex('lore', 'by-series', target.seriesId)
+				db.characters.where('seriesId').equals(target.seriesId).primaryKeys(),
+				db.locations.where('seriesId').equals(target.seriesId).primaryKeys(),
+				db.objects.where('seriesId').equals(target.seriesId).primaryKeys(),
+				db.lore.where('seriesId').equals(target.seriesId).primaryKeys()
 			]);
 		}
 	}
 
-	const tx = db.transaction(
-		['stories', 'characters', 'locations', 'objects', 'lore', 'chapters', 'scenes', 'outlines'],
-		'readwrite'
+	await db.transaction(
+		'rw',
+		[db.stories, db.characters, db.locations, db.objects, db.lore, db.chapters, db.scenes, db.outlines],
+		async () => {
+			const [characterKeys, locationKeys, objectKeys, loreKeys, chapterKeys, sceneKeys] =
+				await Promise.all([
+					db.characters.where('storyId').equals(storyId).primaryKeys(),
+					db.locations.where('storyId').equals(storyId).primaryKeys(),
+					db.objects.where('storyId').equals(storyId).primaryKeys(),
+					db.lore.where('storyId').equals(storyId).primaryKeys(),
+					db.chapters.where('storyId').equals(storyId).primaryKeys(),
+					db.scenes.where('storyId').equals(storyId).primaryKeys()
+				]);
+
+			await Promise.all([
+				db.stories.delete(storyId),
+				db.characters.bulkDelete([...characterKeys, ...orphanedSharedCharacterKeys]),
+				db.locations.bulkDelete([...locationKeys, ...orphanedSharedLocationKeys]),
+				db.objects.bulkDelete([...objectKeys, ...orphanedSharedObjectKeys]),
+				db.lore.bulkDelete([...loreKeys, ...orphanedSharedLoreKeys]),
+				db.chapters.bulkDelete(chapterKeys),
+				db.scenes.bulkDelete(sceneKeys),
+				db.outlines.delete(storyId)
+			]);
+		}
 	);
-
-	const [characters, locations, objects, lore, chapters, scenes] = await Promise.all([
-		tx.objectStore('characters').index('by-story').getAllKeys(storyId),
-		tx.objectStore('locations').index('by-story').getAllKeys(storyId),
-		tx.objectStore('objects').index('by-story').getAllKeys(storyId),
-		tx.objectStore('lore').index('by-story').getAllKeys(storyId),
-		tx.objectStore('chapters').index('by-story').getAllKeys(storyId),
-		tx.objectStore('scenes').index('by-story').getAllKeys(storyId)
-	]);
-
-	await Promise.all([
-		tx.objectStore('stories').delete(storyId),
-		...characters.map((key) => tx.objectStore('characters').delete(key)),
-		...orphanedSharedCharacterKeys.map((key) => tx.objectStore('characters').delete(key)),
-		...locations.map((key) => tx.objectStore('locations').delete(key)),
-		...orphanedSharedLocationKeys.map((key) => tx.objectStore('locations').delete(key)),
-		...objects.map((key) => tx.objectStore('objects').delete(key)),
-		...orphanedSharedObjectKeys.map((key) => tx.objectStore('objects').delete(key)),
-		...lore.map((key) => tx.objectStore('lore').delete(key)),
-		...orphanedSharedLoreKeys.map((key) => tx.objectStore('lore').delete(key)),
-		...chapters.map((key) => tx.objectStore('chapters').delete(key)),
-		...scenes.map((key) => tx.objectStore('scenes').delete(key)),
-		tx.objectStore('outlines').delete(storyId)
-	]);
-
-	await tx.done;
 }
 
 /**
@@ -330,55 +286,55 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
  * series-wide.
  */
 export async function removeSeriesCascade(seriesId: string): Promise<void> {
-	const db = await getDb();
-	const tx = db.transaction(
-		['series', 'stories', 'characters', 'locations', 'objects', 'lore'],
-		'readwrite'
+	await db.transaction(
+		'rw',
+		[db.series, db.stories, db.characters, db.locations, db.objects, db.lore],
+		async () => {
+			const [allStories, sharedCharacters, sharedLocations, sharedObjects, sharedLore] =
+				await Promise.all([
+					db.stories.toArray(),
+					db.characters.where('seriesId').equals(seriesId).toArray(),
+					db.locations.where('seriesId').equals(seriesId).toArray(),
+					db.objects.where('seriesId').equals(seriesId).toArray(),
+					db.lore.where('seriesId').equals(seriesId).toArray()
+				]);
+
+			const seriesStories = allStories.filter((s) => s.seriesId === seriesId);
+			const anchor = [...seriesStories].sort(
+				(a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0)
+			)[0];
+
+			await Promise.all([
+				db.series.delete(seriesId),
+				...seriesStories.map((s) => {
+					const { seriesId: _seriesId, seriesOrder: _seriesOrder, ...rest } = s;
+					return db.stories.put(rest);
+				}),
+				...sharedCharacters.map((c) => {
+					const { seriesId: _seriesId, ...rest } = c;
+					return db.characters.put(anchor ? { ...rest, storyId: anchor.id } : rest);
+				}),
+				...sharedLocations.map((l) => {
+					const { seriesId: _seriesId, ...rest } = l;
+					return db.locations.put(anchor ? { ...rest, storyId: anchor.id } : rest);
+				}),
+				...sharedObjects.map((o) => {
+					const { seriesId: _seriesId, ...rest } = o;
+					return db.objects.put(anchor ? { ...rest, storyId: anchor.id } : rest);
+				}),
+				...sharedLore.map((entry) => {
+					const { seriesId: _seriesId, ...rest } = entry;
+					return db.lore.put(anchor ? { ...rest, storyId: anchor.id } : rest);
+				})
+			]);
+		}
 	);
-
-	const [allStories, sharedCharacters, sharedLocations, sharedObjects, sharedLore] =
-		await Promise.all([
-			tx.objectStore('stories').getAll(),
-			tx.objectStore('characters').index('by-series').getAll(seriesId),
-			tx.objectStore('locations').index('by-series').getAll(seriesId),
-			tx.objectStore('objects').index('by-series').getAll(seriesId),
-			tx.objectStore('lore').index('by-series').getAll(seriesId)
-		]);
-
-	const seriesStories = allStories.filter((s) => s.seriesId === seriesId);
-	const anchor = [...seriesStories].sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0))[0];
-
-	await Promise.all([
-		tx.objectStore('series').delete(seriesId),
-		...seriesStories.map((s) => {
-			const { seriesId: _seriesId, seriesOrder: _seriesOrder, ...rest } = s;
-			return tx.objectStore('stories').put(rest);
-		}),
-		...sharedCharacters.map((c) => {
-			const { seriesId: _seriesId, ...rest } = c;
-			return tx.objectStore('characters').put(anchor ? { ...rest, storyId: anchor.id } : rest);
-		}),
-		...sharedLocations.map((l) => {
-			const { seriesId: _seriesId, ...rest } = l;
-			return tx.objectStore('locations').put(anchor ? { ...rest, storyId: anchor.id } : rest);
-		}),
-		...sharedObjects.map((o) => {
-			const { seriesId: _seriesId, ...rest } = o;
-			return tx.objectStore('objects').put(anchor ? { ...rest, storyId: anchor.id } : rest);
-		}),
-		...sharedLore.map((entry) => {
-			const { seriesId: _seriesId, ...rest } = entry;
-			return tx.objectStore('lore').put(anchor ? { ...rest, storyId: anchor.id } : rest);
-		})
-	]);
-
-	await tx.done;
 }
 
 export async function getSettings(): Promise<AppSettings | undefined> {
-	return (await getDb()).get('settings', 'app');
+	return db.settings.get('app');
 }
 
 export async function saveSettings(settings: AppSettings): Promise<void> {
-	await (await getDb()).put('settings', settings, 'app');
+	await db.settings.put(settings, 'app');
 }
