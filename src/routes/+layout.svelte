@@ -46,13 +46,21 @@
 					>Lore<span class="font-sans">forge</span></span
 				>
 			</a>
-			<button
-				onclick={toggleDarkMode}
-				class="min-h-11 rounded-md border border-border bg-surface-raised px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary"
-				aria-label="Toggle dark mode"
-			>
-				{$settings.darkMode ? '☀ Light' : '🌙 Dark'}
-			</button>
+			<div class="flex items-center gap-2">
+				<a
+					href={resolve('/prompts')}
+					class="flex min-h-11 items-center rounded-md border border-border bg-surface-raised px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary"
+				>
+					Prompts
+				</a>
+				<button
+					onclick={toggleDarkMode}
+					class="min-h-11 rounded-md border border-border bg-surface-raised px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary"
+					aria-label="Toggle dark mode"
+				>
+					{$settings.darkMode ? '☀ Light' : '🌙 Dark'}
+				</button>
+			</div>
 		</header>
 	{/if}
 

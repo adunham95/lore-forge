@@ -181,6 +181,15 @@ export interface Scene {
 	updatedAt: string;
 }
 
+export interface WritingPrompt {
+	id: string;
+	title: string;
+	content: string; // Markdown
+	tags: string[];
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface AppSettings {
 	darkMode: boolean;
 	editorFontSize: number; // px, default 16

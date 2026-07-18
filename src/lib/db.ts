@@ -9,6 +9,7 @@ import type {
 	Chapter,
 	Scene,
 	StoryOutline,
+	WritingPrompt,
 	AppSettings
 } from './types';
 
@@ -38,10 +39,11 @@ interface SwbSchema extends DBSchema {
 		indexes: { 'by-story': string; 'by-chapter': string };
 	};
 	outlines: { key: string; value: StoryOutline };
+	prompts: { key: string; value: WritingPrompt };
 	settings: { key: string; value: AppSettings };
 }
 
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 
 let _db: IDBPDatabase<SwbSchema> | undefined;
 
@@ -103,6 +105,11 @@ export async function getDb(): Promise<IDBPDatabase<SwbSchema>> {
 			if (oldVersion < 6) {
 				if (!db.objectStoreNames.contains('outlines')) {
 					db.createObjectStore('outlines', { keyPath: 'storyId' });
+				}
+			}
+			if (oldVersion < 7) {
+				if (!db.objectStoreNames.contains('prompts')) {
+					db.createObjectStore('prompts', { keyPath: 'id' });
 				}
 			}
 		}
@@ -223,8 +230,20 @@ export async function deleteOutline(storyId: string): Promise<void> {
 	await (await getDb()).delete('outlines', storyId);
 }
 
+export async function getAllPrompts(): Promise<WritingPrompt[]> {
+	return (await getDb()).getAll('prompts');
+}
+
 type EntityStore =
-	'stories' | 'series' | 'characters' | 'locations' | 'objects' | 'lore' | 'chapters' | 'scenes';
+	| 'stories'
+	| 'series'
+	| 'characters'
+	| 'locations'
+	| 'objects'
+	| 'lore'
+	| 'chapters'
+	| 'scenes'
+	| 'prompts';
 
 export async function save<S extends EntityStore>(
 	store: S,
