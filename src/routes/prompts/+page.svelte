@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { prompts, loadPrompts, savePrompt } from '$lib/stores/prompts';
+	import { showToast } from '$lib/stores/toast';
 	import { byUpdatedDesc } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -37,9 +38,22 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		};
-		await savePrompt(prompt);
-		showCreate = false;
-		goto(resolve('/prompts/[promptId]', { promptId: prompt.id }));
+		try {
+			await savePrompt(prompt);
+			showCreate = false;
+			goto(resolve('/prompts/[promptId]', { promptId: prompt.id }));
+		} catch (err) {
+			const detail =
+				err instanceof Error
+					? `${err.name}: ${err.message}`
+					: typeof err === 'string'
+						? err
+						: JSON.stringify(err);
+			showToast(
+				`Failed to save prompt "${prompt.title}" (id: ${prompt.id}). ${detail}. This is usually caused by the browser's local storage being full or blocked (e.g. private browsing mode) — check your browser's storage settings and try again.`,
+				'error'
+			);
+		}
 	}
 </script>
 
