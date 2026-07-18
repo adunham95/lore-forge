@@ -7,6 +7,7 @@
 		disabled?: boolean;
 		onclick?: (e: MouseEvent) => void;
 		children: Snippet;
+		className?: string;
 	}
 
 	let {
@@ -14,7 +15,8 @@
 		type = 'button',
 		disabled = false,
 		onclick,
-		children
+		children,
+		className = ''
 	}: Props = $props();
 
 	const variantClasses: Record<NonNullable<Props['variant']>, string> = {
@@ -29,9 +31,9 @@
 	{type}
 	{disabled}
 	{onclick}
-	class="min-h-11 rounded-md px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 {variantClasses[
-		variant
-	]}"
+	class={`min-h-11 rounded-md px-4 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${className} ${
+		variantClasses[variant]
+	}`}
 >
 	{@render children()}
 </button>

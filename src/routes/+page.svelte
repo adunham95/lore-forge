@@ -92,12 +92,12 @@
 <svelte:head><title>Loreforge</title></svelte:head>
 
 <div class="mx-auto max-w-5xl px-6 py-10">
-	<div class="mb-8 flex items-center justify-between">
+	<div class="mb-8 flex items-start justify-between gap-2 md:items-center">
 		<div>
 			<h1 class="font-serif text-3xl">Your Stories</h1>
 			<p class="text-sm text-text-secondary">Build worlds. Tell stories.</p>
 		</div>
-		<div class="flex gap-2">
+		<div class="flex flex-col-reverse gap-2 md:flex-row">
 			<Button variant="secondary" onclick={openCreateSeries}>+ New Series</Button>
 			<Button onclick={openCreate}>+ New Story</Button>
 		</div>

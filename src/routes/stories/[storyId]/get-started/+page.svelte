@@ -12,6 +12,7 @@
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
 	import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
 	import type { OutlineTemplate, StoryOutlineAct } from '$lib/types';
+	import MarkdownViewer from '$lib/components/editor/MarkdownViewer.svelte';
 
 	const storyId = $derived(page.params.storyId as string);
 
@@ -268,12 +269,12 @@
 		{/each}
 	</div>
 {:else if $outline}
-	<div class="mb-6 flex items-center justify-between">
+	<div class="mb-6 flex items-start justify-between md:items-center">
 		<div>
 			<p class="text-xs tracking-wide text-text-secondary uppercase">{$outline.templateName}</p>
 			<h1 class="font-serif text-3xl">Outline</h1>
 		</div>
-		<div class="flex items-center gap-4">
+		<div class="flex flex-col-reverse items-center gap-4 md:flex-row">
 			<a
 				href={resolve('/stories/[storyId]/chapters', { storyId })}
 				class="text-sm text-text-secondary hover:text-text-primary"
@@ -290,11 +291,7 @@
 				<h2 class="font-serif text-xl">{act.name}</h2>
 				<p class="mt-1 text-sm text-text-secondary italic">{act.guidance}</p>
 				<div class="mt-3">
-					<MarkdownEditor
-						bind:value={act.description}
-						rows={5}
-						placeholder="What happens in this act?"
-					/>
+					<MarkdownViewer html={act.description} />
 				</div>
 			</div>
 		{/each}

@@ -99,7 +99,7 @@
 
 <div class="mb-6 flex items-center justify-between">
 	<h1 class="font-serif text-3xl">Chapters & Scenes</h1>
-	<div class="flex gap-2">
+	<div class="flex flex-col-reverse gap-2 md:flex-row">
 		<Button variant="secondary" onclick={() => (showTemplates = true)}>Use Template</Button>
 		<Button onclick={addChapter}>+ New Chapter</Button>
 	</div>
