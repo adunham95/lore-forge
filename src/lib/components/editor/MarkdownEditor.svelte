@@ -59,19 +59,6 @@
 		focusSelection(lineStart, lineStart + prefixed.length);
 	}
 
-	function insertLink() {
-		const el = textareaEl;
-		if (!el) return;
-		const url = window.prompt('Link URL', 'https://');
-		if (!url) return;
-		const start = el.selectionStart;
-		const end = el.selectionEnd;
-		const label = value.slice(start, end) || 'link text';
-		const inserted = `[${label}](${url})`;
-		value = value.slice(0, start) + inserted + value.slice(end);
-		focusSelection(start + inserted.length, start + inserted.length);
-	}
-
 	function onKeydown(e: KeyboardEvent) {
 		if (!(e.metaKey || e.ctrlKey)) return;
 		if (e.key === 'b') {
@@ -85,30 +72,50 @@
 
 	const toolbarActions = [
 		{
-			label: 'B',
 			title: 'Bold',
-			class: 'font-bold',
+			icon: '<path d="M14 12a4 4 0 0 0 0-8H6v8"/><path d="M15 20a4 4 0 0 0 0-8H6v8Z"/>',
 			action: () => wrapSelection('**', '**', 'bold text')
 		},
 		{
-			label: 'I',
 			title: 'Italic',
-			class: 'italic',
+			icon: '<line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/>',
 			action: () => wrapSelection('_', '_', 'italic text')
 		},
-		{ label: 'H1', title: 'Heading', class: '', action: () => prefixLines('# ') },
-		{ label: 'H2', title: 'Subheading', class: '', action: () => prefixLines('## ') },
-		{ label: 'H3', title: 'Subheading', class: '', action: () => prefixLines('### ') },
-		{ label: '• List', title: 'Bullet list', class: '', action: () => prefixLines('- ') },
-		{ label: '1. List', title: 'Numbered list', class: '', action: () => prefixLines('1. ') },
-		{ label: '” Quote', title: 'Quote', class: '', action: () => prefixLines('> ') },
 		{
-			label: '</>',
-			title: 'Inline code',
-			class: 'font-mono',
-			action: () => wrapSelection('`', '`', 'code')
+			title: 'Heading 1',
+			icon: '<path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="m17 12 3-2v8"/>',
+			action: () => prefixLines('# ')
 		},
-		{ label: '🔗', title: 'Link', class: '', action: insertLink }
+		{
+			title: 'Heading 2',
+			icon: '<path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M21 18h-4c0-4 4-3 4-6 0-1.5-2-2.5-4-1"/>',
+			action: () => prefixLines('## ')
+		},
+		{
+			title: 'Heading 3',
+			icon: '<path d="M4 12h8"/><path d="M4 18V6"/><path d="M12 18V6"/><path d="M17.5 10.5c1.7-1 3.5 0 3.5 1.5a2 2 0 0 1-2 2"/><path d="M17 16.5c2 1.5 4 .3 4-1.5a2 2 0 0 0-2-2"/>',
+			action: () => prefixLines('### ')
+		},
+		{
+			title: 'Bullet list',
+			icon: '<line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/>',
+			action: () => prefixLines('- ')
+		},
+		{
+			title: 'Numbered list',
+			icon: '<line x1="10" x2="21" y1="6" y2="6"/><line x1="10" x2="21" y1="12" y2="12"/><line x1="10" x2="21" y1="18" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>',
+			action: () => prefixLines('1. ')
+		},
+		{
+			title: 'Quote',
+			icon: '<path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/>',
+			action: () => prefixLines('> ')
+		},
+		{
+			title: 'Inline code',
+			icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+			action: () => wrapSelection('`', '`', 'code')
+		}
 	];
 </script>
 
@@ -136,15 +143,26 @@
 
 	<div class={tab === 'write' ? (expand ? 'flex min-h-0 flex-1 flex-col' : 'block') : 'hidden'}>
 		<div class="flex gap-1 overflow-x-auto border-b border-border bg-surface-raised p-1.5">
-			{#each toolbarActions as action (action.label)}
+			{#each toolbarActions as action (action.title)}
 				<button
 					type="button"
 					title={action.title}
 					aria-label={action.title}
 					onclick={action.action}
-					class="min-w-8 shrink-0 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary {action.class}"
+					class="flex size-8 shrink-0 items-center justify-center rounded-md text-text-secondary hover:bg-border/40 hover:text-text-primary"
 				>
-					{action.label}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						width="16"
+						height="16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						>{@html action.icon}</svg
+					>
 				</button>
 			{/each}
 			<div class="ml-auto flex items-center gap-1">
