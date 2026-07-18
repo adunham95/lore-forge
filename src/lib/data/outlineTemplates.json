@@ -203,5 +203,208 @@
 				"chapters": ["9:00 - Turn Into Act Three", "10:00 - Climax", "11:00 - Falling Action"]
 			}
 		]
+	},
+	{
+		"id": "seven-point",
+		"name": "Seven-Point Story Structure",
+		"description": "Dan Wells' backward-plotted structure built around two pinch points and a midpoint shift.",
+		"acts": [
+			{
+				"name": "Act 1 - Setup",
+				"guidance": "Open with a hook that shows your protagonist's starting state, then hit a plot turn that hands them a goal. Where do they begin, and what launches them toward it?",
+				"chapters": ["Hook", "Plot Turn 1"]
+			},
+			{
+				"name": "Act 2 - Rising Pressure",
+				"guidance": "Pressure from the antagonist forces your protagonist to react, then a midpoint flips them from reactive to proactive. What squeezes them first, and what changes their approach?",
+				"chapters": ["Pinch Point 1", "Midpoint"]
+			},
+			{
+				"name": "Act 3 - Escalation and Resolution",
+				"guidance": "A second, harder squeeze strips away options before a final turn sends your protagonist into the resolution. What's the worst it gets, and how do they finally act to end it?",
+				"chapters": ["Pinch Point 2", "Plot Turn 2", "Resolution"]
+			}
+		]
+	},
+	{
+		"id": "mystery-beat-sheet",
+		"name": "Mystery Beat Sheet",
+		"description": "A genre-focused structure for whodunits and detective stories, from the crime to the reveal.",
+		"acts": [
+			{
+				"name": "Act 1 - The Crime",
+				"guidance": "Establish your detective and their world, then drop the crime that pulls them in. Who's investigating, and what's the puzzle that hooks them?",
+				"chapters": ["Establish the Detective", "The Crime", "The Investigation Begins"]
+			},
+			{
+				"name": "Act 2 - The Investigation",
+				"guidance": "Clues surface alongside red herrings that mislead both detective and reader, building toward a midpoint discovery that reframes the case. What false trails get laid, and what breaks the case open?",
+				"chapters": [
+					"First Clues",
+					"Red Herring",
+					"Suspect Emerges",
+					"Midpoint Revelation",
+					"Deepening Complications"
+				]
+			},
+			{
+				"name": "Act 3 - The Reveal",
+				"guidance": "The detective connects the final pieces, confronts the culprit, and lays out the solution. What's the last clue that cracks it, and how does the truth come out?",
+				"chapters": ["Dark Moment", "Final Clue", "Confrontation", "Reveal and Resolution"]
+			}
+		]
+	},
+	{
+		"id": "forced-proximity-romance",
+		"name": "Forced Proximity Romance",
+		"description": "A romance built on circumstance throwing two uninterested leads together until they can't stay apart.",
+		"acts": [
+			{
+				"name": "Act 1 - Thrown Together",
+				"guidance": "Establish both leads as content apart, then have circumstance pair them up against their will. Who are they before this, and what forces them into each other's orbit?",
+				"chapters": ["Establish the Leads Apart", "The Pairing", "Mutual Reluctance"]
+			},
+			{
+				"name": "Act 2 - Close Quarters",
+				"guidance": "Proximity chips away at their resistance as they're forced to rely on each other, hitting a midpoint where indifference cracks into real feeling. What breaks the ice, and what moment makes the attraction undeniable?",
+				"chapters": [
+					"Forced Cooperation",
+					"Cracks in the Resistance",
+					"Midpoint - Undeniable Spark",
+					"Falling Despite Themselves"
+				]
+			},
+			{
+				"name": "Act 3 - Choosing Each Other",
+				"guidance": "The circumstance that threw them together ends or threatens to, forcing a real choice about what they want. What pulls them apart when proximity is no longer forcing them together, and what makes them choose to stay?",
+				"chapters": ["The Circumstance Ends", "The Pull Apart", "Choosing to Stay"]
+			}
+		]
+	},
+	{
+		"id": "heist-structure",
+		"name": "Heist Structure",
+		"description": "A caper structure built around assembling a crew and executing a plan that inevitably goes sideways.",
+		"acts": [
+			{
+				"name": "Act 1 - The Job",
+				"guidance": "Introduce the target and the reason it's worth the risk, then assemble the crew and their plan. What's the prize, and who's pulled together to go after it?",
+				"chapters": ["The Target", "Assembling the Crew", "The Plan"]
+			},
+			{
+				"name": "Act 2 - The Execution",
+				"guidance": "The crew sets the plan in motion, hits a midpoint complication that forces improvisation, and discovers a betrayal or hidden angle. What goes wrong first, and who isn't who they seemed?",
+				"chapters": ["Setting Up the Job", "Midpoint Complication", "The Betrayal", "Improvising a New Plan"]
+			},
+			{
+				"name": "Act 3 - The Score",
+				"guidance": "Everything converges on the job itself, revealing how much of the plan was misdirection all along. How does the crew pull it off, and what's the final twist on who gets what?",
+				"chapters": ["The Job Itself", "The Twist Revealed", "The Getaway"]
+			}
+		]
+	},
+	{
+		"id": "rescue-mission",
+		"name": "Rescue Mission",
+		"description": "An action structure built around getting someone back: infiltration, extraction, and the getaway.",
+		"acts": [
+			{
+				"name": "Act 1 - The Taking",
+				"guidance": "Establish who's been taken and why it matters, then show the protagonist committing to get them back. Who's lost, and what does it cost the protagonist to go after them?",
+				"chapters": ["Establish the Stakes", "The Taking", "The Decision to Act"]
+			},
+			{
+				"name": "Act 2 - Getting In",
+				"guidance": "The protagonist gathers what they need and infiltrates enemy territory, hitting a midpoint discovery that changes the mission. What do they need to get in, and what do they learn once they're inside?",
+				"chapters": ["Gathering Resources", "Infiltration", "Midpoint Discovery", "Closing In"]
+			},
+			{
+				"name": "Act 3 - Getting Out",
+				"guidance": "The extraction goes wrong, forcing a fight or chase to get everyone out alive. What breaks the plan, and how do they make it out?",
+				"chapters": ["The Extraction", "It Goes Wrong", "The Getaway"]
+			}
+		]
+	},
+	{
+		"id": "horror-survival",
+		"name": "Horror / Survival",
+		"description": "A dread-building structure that escalates from an uneasy calm to a fight for survival.",
+		"acts": [
+			{
+				"name": "Act 1 - The Calm Before",
+				"guidance": "Establish a normal, even idyllic, world and plant the first wrong note that something isn't right. What does safety look like here, and what small detail hints it won't last?",
+				"chapters": ["Establish Normalcy", "The First Wrong Sign", "Dismissing the Warning"]
+			},
+			{
+				"name": "Act 2 - Escalating Dread",
+				"guidance": "The threat reveals itself in earnest, isolating your characters and picking them off as they scramble for answers. What cuts off their escape routes, and what do they learn about the thing hunting them?",
+				"chapters": [
+					"The Threat Reveals Itself",
+					"Isolation",
+					"First Losses",
+					"Midpoint - Understanding the Threat",
+					"The Net Tightens"
+				]
+			},
+			{
+				"name": "Act 3 - The Reckoning",
+				"guidance": "Survivors are forced into a final confrontation with the threat, on its terms or theirs. Who's left, and what does it take to survive - or does anyone?",
+				"chapters": ["Last Stand", "Final Confrontation", "Aftermath"]
+			}
+		]
+	},
+	{
+		"id": "coming-of-age",
+		"name": "Coming of Age",
+		"description": "An internal growth arc following a protagonist from innocence through a disillusioning event to hard-won maturity.",
+		"acts": [
+			{
+				"name": "Act 1 - Innocence",
+				"guidance": "Establish your protagonist's sheltered or naive understanding of the world, and the person or event that first cracks it. What do they believe before they know better, and what shakes that belief?",
+				"chapters": ["The Sheltered World", "The First Crack", "Stepping Beyond What's Known"]
+			},
+			{
+				"name": "Act 2 - Disillusionment",
+				"guidance": "Your protagonist confronts the gap between what they believed and how the world actually works, stumbling through mistakes as old certainties fail. What do they get wrong before they start getting it right, and what illusion finally breaks at the midpoint?",
+				"chapters": [
+					"Trial and Error",
+					"A Mentor or Rival",
+					"Midpoint - The Illusion Breaks",
+					"Consequences of Growing Up"
+				]
+			},
+			{
+				"name": "Act 3 - Maturity",
+				"guidance": "Your protagonist faces a defining choice that requires the person they've become, not the one they were. What does this choice cost them, and who are they on the other side of it?",
+				"chapters": ["The Defining Choice", "Who They've Become"]
+			}
+		]
+	},
+	{
+		"id": "espionage-thriller",
+		"name": "Espionage Thriller",
+		"description": "A spy structure built on divided loyalties, where the danger comes from within the mission itself.",
+		"acts": [
+			{
+				"name": "Act 1 - The Mission",
+				"guidance": "Establish your operative and the mission they're recruited or assigned to, along with the people they'll have to trust. Who are they working for, and who can they actually rely on?",
+				"chapters": ["Establish the Operative", "The Mission Briefing", "First Moves"]
+			},
+			{
+				"name": "Act 2 - Divided Loyalties",
+				"guidance": "Trust erodes as the operative gathers intelligence and starts to suspect someone close to the mission isn't what they claim. What do they uncover, and who do they start to doubt at the midpoint?",
+				"chapters": [
+					"Gathering Intelligence",
+					"Cracks of Suspicion",
+					"Midpoint - The First Betrayal",
+					"Going Off the Grid"
+				]
+			},
+			{
+				"name": "Act 3 - The Reveal",
+				"guidance": "The mole or double-cross is exposed, forcing a final gambit to salvage the mission. Who was really working against them, and how do they turn it around?",
+				"chapters": ["Uncovering the Mole", "The Final Gambit", "The Sting"]
+			}
+		]
 	}
 ]
