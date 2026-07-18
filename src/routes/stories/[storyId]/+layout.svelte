@@ -57,9 +57,9 @@
 			? 'h-screen overflow-hidden'
 			: 'min-h-[calc(100vh-65px)]'} flex-col md:flex-row"
 		style="
-			--accent: {$settings.darkMode ? theme.accentDark : theme.accentLight};
-			--accent-soft: {$settings.darkMode ? theme.accentSoftDark : theme.accentSoft};
-			--accent-text: {theme.accentText};
+			--color-accent: {$settings.darkMode ? theme.accentDark : theme.accentLight};
+			--color-accent-soft: {$settings.darkMode ? theme.accentSoftDark : theme.accentSoft};
+			--color-accent-text: {theme.accentText};
 		"
 	>
 		{#if !$focusMode}
