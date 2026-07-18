@@ -141,6 +141,43 @@
 		]
 	},
 	{
+		"id": "romance-beat-sheet",
+		"name": "Romance Beat Sheet",
+		"description": "A genre-focused structure built around the central relationship, from first meeting to happily-ever-after.",
+		"acts": [
+			{
+				"name": "Act 1 - Meeting",
+				"guidance": "Establish both leads in their separate worlds, bring them together, and plant the spark and the obstacle that keeps them apart. Who are they before each other, and what draws them together despite the odds?",
+				"chapters": [
+					"Establish the Leads",
+					"Meet-Cute",
+					"Save the Cat",
+					"Attraction with Obstacles"
+				]
+			},
+			{
+				"name": "Act 2 - Falling",
+				"guidance": "The relationship deepens as the leads are pushed together, hit a point where turning back is no longer an option, and bond over a shared vulnerability at the midpoint. What draws them closer, and what do they risk by getting close?",
+				"chapters": [
+					"Deepening Connection",
+					"No Going Back",
+					"Midpoint - Falling in Love/Bonding Moment",
+					"Doubts Creep In"
+				]
+			},
+			{
+				"name": "Act 3 - Breaking and Choosing",
+				"guidance": "External or internal pressure drives the leads apart at the black moment, before one makes a grand gesture to prove they've changed. What breaks them apart, and what does it take to win each other back?",
+				"chapters": [
+					"Retreat to Corners",
+					"Black Moment",
+					"Grand Gesture",
+					"Happily Ever After / Happy For Now"
+				]
+			}
+		]
+	},
+	{
 		"id": "story-clock",
 		"name": "Story Clock",
 		"description": "A twelve-beat structure mapped to the four quarters of a clock face.",
