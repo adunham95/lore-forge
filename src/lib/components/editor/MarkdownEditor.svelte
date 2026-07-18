@@ -134,13 +134,7 @@
 		</button>
 	</div>
 
-	<div
-		class="{tab === 'write'
-			? expand
-				? 'flex min-h-0 flex-1 flex-col'
-				: 'block'
-			: 'hidden'}"
-	>
+	<div class={tab === 'write' ? (expand ? 'flex min-h-0 flex-1 flex-col' : 'block') : 'hidden'}>
 		<div class="flex gap-1 overflow-x-auto border-b border-border bg-surface-raised p-1.5">
 			{#each toolbarActions as action (action.label)}
 				<button
@@ -148,7 +142,7 @@
 					title={action.title}
 					aria-label={action.title}
 					onclick={action.action}
-					class="min-w-8 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary {action.class}"
+					class="min-w-8 shrink-0 rounded-md px-2 py-1 text-sm whitespace-nowrap text-text-secondary hover:bg-border/40 hover:text-text-primary {action.class}"
 				>
 					{action.label}
 				</button>
@@ -186,8 +180,7 @@
 			style="font-size: {$settings.editorFontSize}px"
 			class="w-full bg-surface p-3 font-mono text-text-primary focus:outline-none {expand
 				? 'min-h-0 flex-1 resize-none'
-				: 'resize-y'}"
-		></textarea>
+				: 'resize-y'}"></textarea>
 	</div>
 	<div class={tab === 'preview' ? 'block' : 'hidden'}>
 		{#if html}
