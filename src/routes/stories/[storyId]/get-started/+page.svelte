@@ -12,12 +12,14 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
 	import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
+	import CustomOutlineBuilder from '$lib/components/story/CustomOutlineBuilder.svelte';
 	import type { OutlineTemplate, StoryOutlineAct } from '$lib/types';
 	import MarkdownViewer from '$lib/components/editor/MarkdownViewer.svelte';
 
 	const storyId = $derived(page.params.storyId as string);
 
 	let picking = $state(false);
+	let building = $state(false);
 	let wizardTemplate = $state<OutlineTemplate | null>(null);
 	let wizardActs = $state<StoryOutlineAct[]>([]);
 	let step = $state(0);
@@ -85,6 +87,7 @@
 		}));
 		step = 0;
 		picking = false;
+		building = false;
 	}
 
 	function cancelWizard() {
@@ -106,7 +109,7 @@
 				createdAt: timestamp,
 				updatedAt: timestamp
 			});
-			await applyOutlineTemplate(storyId, wizardTemplate.id);
+			await applyOutlineTemplate(storyId, wizardTemplate);
 			cancelWizard();
 		} catch (err) {
 			showSaveError(`outline "${wizardTemplate.name}" (story id: ${storyId})`, err);
@@ -263,6 +266,19 @@
 			</div>
 		</div>
 	</div>
+{:else if building}
+	<div class="mb-6 flex items-center justify-between">
+		<h1 class="font-serif text-3xl">Create a Custom Outline</h1>
+	</div>
+	<div class="max-w-2xl">
+		<CustomOutlineBuilder
+			onCreate={(template) => startWizard(template)}
+			onCancel={() => {
+				building = false;
+				picking = true;
+			}}
+		/>
+	</div>
 {:else if picking}
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="font-serif text-3xl">Choose a Template</h1>
@@ -286,6 +302,16 @@
 				</p>
 			</button>
 		{/each}
+		<button
+			onclick={() => {
+				picking = false;
+				building = true;
+			}}
+			class="flex flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-border p-4 text-center text-text-secondary transition hover:border-accent hover:text-accent"
+		>
+			<span class="font-serif text-lg">+ Create Your Own</span>
+			<span class="text-xs">Define your own acts and chapters</span>
+		</button>
 	</div>
 {:else if $outline}
 	<div class="mb-6 flex items-start justify-between md:items-center">
@@ -321,7 +347,10 @@
 		description="Pick a story structure and walk through it act by act to build a plan you can reference while writing chapters and scenes."
 	>
 		{#snippet action()}
-			<Button onclick={() => (picking = true)}>Start with a Template</Button>
+			<div class="flex gap-2">
+				<Button onclick={() => (picking = true)}>Start with a Template</Button>
+				<Button variant="secondary" onclick={() => (building = true)}>Create Custom Outline</Button>
+			</div>
 		{/snippet}
 	</EmptyState>
 {/if}

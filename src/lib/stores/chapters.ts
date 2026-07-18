@@ -22,14 +22,15 @@ export async function saveChapter(chapter: Chapter) {
 	});
 }
 
-/** Appends every chapter from an outline template, tagging each with its act. */
-export async function applyOutlineTemplate(storyId: string, templateId: string) {
-	const template = outlineTemplates.find((t) => t.id === templateId);
-	if (!template) return;
+/** Appends every chapter from an outline template, tagging each with its act. Accepts either a built-in template's id or a custom template object. */
+export async function applyOutlineTemplate(storyId: string, template: OutlineTemplate | string) {
+	const resolved =
+		typeof template === 'string' ? outlineTemplates.find((t) => t.id === template) : template;
+	if (!resolved) return;
 
 	let order = get(chapters).length;
 	const timestamp = nowIso();
-	const newChapters: Chapter[] = template.acts.flatMap((act) =>
+	const newChapters: Chapter[] = resolved.acts.flatMap((act) =>
 		act.chapters.map((title) => ({
 			id: newId(),
 			storyId,
