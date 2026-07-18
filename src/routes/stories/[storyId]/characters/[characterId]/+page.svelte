@@ -64,7 +64,7 @@
 			await saveCharacter({
 				...character,
 				name: name.trim(),
-				age: age.trim() ? Number(age) : null,
+				age: age ? Number(age) : null,
 				job: job.trim(),
 				role,
 				appearance,
