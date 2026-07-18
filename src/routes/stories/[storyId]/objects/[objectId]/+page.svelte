@@ -10,7 +10,7 @@
 		makeObjectStoryOnly
 	} from '$lib/stores/objects';
 	import { activeStory } from '$lib/stores/stories';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
@@ -39,15 +39,19 @@
 	async function save(e: SubmitEvent) {
 		e.preventDefault();
 		if (!object || !name.trim()) return;
-		await saveObject({
-			...object,
-			name: name.trim(),
-			type: type.trim(),
-			description: description.trim(),
-			notes,
-			updatedAt: nowIso()
-		});
-		showToast('Object saved');
+		try {
+			await saveObject({
+				...object,
+				name: name.trim(),
+				type: type.trim(),
+				description: description.trim(),
+				notes,
+				updatedAt: nowIso()
+			});
+			showToast('Object saved');
+		} catch (err) {
+			showSaveError(`object "${name.trim()}" (id: ${object.id})`, err);
+		}
 	}
 
 	async function toggleSeriesSharing() {

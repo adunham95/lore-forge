@@ -10,7 +10,7 @@
 		makeCharacterStoryOnly
 	} from '$lib/stores/characters';
 	import { activeStory } from '$lib/stores/stories';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
@@ -60,18 +60,22 @@
 	async function save(e: SubmitEvent) {
 		e.preventDefault();
 		if (!character || !name.trim()) return;
-		await saveCharacter({
-			...character,
-			name: name.trim(),
-			age: age.trim() ? Number(age) : null,
-			job: job.trim(),
-			role,
-			appearance,
-			personality,
-			notes,
-			updatedAt: nowIso()
-		});
-		showToast('Character saved');
+		try {
+			await saveCharacter({
+				...character,
+				name: name.trim(),
+				age: age.trim() ? Number(age) : null,
+				job: job.trim(),
+				role,
+				appearance,
+				personality,
+				notes,
+				updatedAt: nowIso()
+			});
+			showToast('Character saved');
+		} catch (err) {
+			showSaveError(`character "${name.trim()}" (id: ${character.id})`, err);
+		}
 	}
 
 	async function toggleSeriesSharing() {
@@ -97,20 +101,28 @@
 		description: string;
 	}) {
 		if (!character) return;
-		await saveCharacter({
-			...character,
-			relationships: [...character.relationships, relationship],
-			updatedAt: nowIso()
-		});
+		try {
+			await saveCharacter({
+				...character,
+				relationships: [...character.relationships, relationship],
+				updatedAt: nowIso()
+			});
+		} catch (err) {
+			showSaveError(`relationship for "${character.name}" (id: ${character.id})`, err);
+		}
 	}
 
 	async function removeRelationship(index: number) {
 		if (!character) return;
-		await saveCharacter({
-			...character,
-			relationships: character.relationships.filter((_, i) => i !== index),
-			updatedAt: nowIso()
-		});
+		try {
+			await saveCharacter({
+				...character,
+				relationships: character.relationships.filter((_, i) => i !== index),
+				updatedAt: nowIso()
+			});
+		} catch (err) {
+			showSaveError(`relationship removal for "${character.name}" (id: ${character.id})`, err);
+		}
 	}
 </script>
 

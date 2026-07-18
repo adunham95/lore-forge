@@ -4,6 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { objects, saveObject } from '$lib/stores/objects';
 	import { activeStory } from '$lib/stores/stories';
+	import { showSaveError } from '$lib/stores/toast';
 	import { byUpdatedDesc } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -45,9 +46,13 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		};
-		await saveObject(object);
-		showCreate = false;
-		goto(resolve('/stories/[storyId]/objects/[objectId]', { storyId, objectId: object.id }));
+		try {
+			await saveObject(object);
+			showCreate = false;
+			goto(resolve('/stories/[storyId]/objects/[objectId]', { storyId, objectId: object.id }));
+		} catch (err) {
+			showSaveError(`object "${object.name}" (id: ${object.id})`, err);
+		}
 	}
 </script>
 

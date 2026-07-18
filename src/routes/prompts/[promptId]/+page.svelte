@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { prompts, loadPrompts, savePrompt, deletePrompt } from '$lib/stores/prompts';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import Button from '$lib/components/ui/Button.svelte';
 	import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
 
@@ -36,13 +36,17 @@
 			.split(',')
 			.map((t) => t.trim())
 			.filter(Boolean);
-		await savePrompt({
-			...prompt,
-			title: title.trim(),
-			content,
-			tags
-		});
-		showToast('Prompt saved');
+		try {
+			await savePrompt({
+				...prompt,
+				title: title.trim(),
+				content,
+				tags
+			});
+			showToast('Prompt saved');
+		} catch (err) {
+			showSaveError(`prompt "${title.trim()}" (id: ${prompt.id})`, err);
+		}
 	}
 
 	async function removePrompt() {

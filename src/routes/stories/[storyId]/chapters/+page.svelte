@@ -11,6 +11,7 @@
 	} from '$lib/stores/chapters';
 	import { scenes, saveScene } from '$lib/stores/scenes';
 	import { outline } from '$lib/stores/outline';
+	import { showSaveError } from '$lib/stores/toast';
 	import { byOrder } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -45,32 +46,49 @@
 
 	async function addChapter() {
 		const timestamp = nowIso();
-		await saveChapter({
-			id: newId(),
-			storyId,
-			title: 'New Chapter',
-			act: '',
-			order: $chapters.length,
-			createdAt: timestamp,
-			updatedAt: timestamp
-		});
+		const id = newId();
+		try {
+			await saveChapter({
+				id,
+				storyId,
+				title: 'New Chapter',
+				act: '',
+				order: $chapters.length,
+				createdAt: timestamp,
+				updatedAt: timestamp
+			});
+		} catch (err) {
+			showSaveError(`chapter (id: ${id})`, err);
+		}
 	}
 
 	async function useTemplate(templateId: string) {
-		await applyOutlineTemplate(storyId, templateId);
-		showTemplates = false;
+		try {
+			await applyOutlineTemplate(storyId, templateId);
+			showTemplates = false;
+		} catch (err) {
+			showSaveError(`outline template "${templateId}" (story id: ${storyId})`, err);
+		}
 	}
 
 	async function renameChapter(chapterId: string, title: string) {
 		const chapter = $chapters.find((c) => c.id === chapterId);
 		if (!chapter) return;
-		await saveChapter({ ...chapter, title, updatedAt: nowIso() });
+		try {
+			await saveChapter({ ...chapter, title, updatedAt: nowIso() });
+		} catch (err) {
+			showSaveError(`chapter "${title}" (id: ${chapter.id})`, err);
+		}
 	}
 
 	async function setChapterAct(chapterId: string, act: string) {
 		const chapter = $chapters.find((c) => c.id === chapterId);
 		if (!chapter) return;
-		await saveChapter({ ...chapter, act, updatedAt: nowIso() });
+		try {
+			await saveChapter({ ...chapter, act, updatedAt: nowIso() });
+		} catch (err) {
+			showSaveError(`act assignment for chapter "${chapter.title}" (id: ${chapter.id})`, err);
+		}
 	}
 
 	async function addScene(chapterId: string) {
@@ -90,8 +108,12 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		};
-		await saveScene(scene);
-		goto(resolve('/stories/[storyId]/scenes/[sceneId]', { storyId, sceneId: scene.id }));
+		try {
+			await saveScene(scene);
+			goto(resolve('/stories/[storyId]/scenes/[sceneId]', { storyId, sceneId: scene.id }));
+		} catch (err) {
+			showSaveError(`scene (id: ${scene.id})`, err);
+		}
 	}
 </script>
 

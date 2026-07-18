@@ -10,7 +10,7 @@
 		makeLoreStoryOnly
 	} from '$lib/stores/lore';
 	import { activeStory } from '$lib/stores/stories';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
@@ -37,14 +37,18 @@
 	async function save(e: SubmitEvent) {
 		e.preventDefault();
 		if (!entry || !title.trim()) return;
-		await saveLoreEntry({
-			...entry,
-			title: title.trim(),
-			category: category.trim(),
-			content,
-			updatedAt: nowIso()
-		});
-		showToast('Lore entry saved');
+		try {
+			await saveLoreEntry({
+				...entry,
+				title: title.trim(),
+				category: category.trim(),
+				content,
+				updatedAt: nowIso()
+			});
+			showToast('Lore entry saved');
+		} catch (err) {
+			showSaveError(`lore entry "${title.trim()}" (id: ${entry.id})`, err);
+		}
 	}
 
 	async function toggleSeriesSharing() {

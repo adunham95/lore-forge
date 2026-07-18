@@ -4,6 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { characters, saveCharacter } from '$lib/stores/characters';
 	import { activeStory } from '$lib/stores/stories';
+	import { showSaveError } from '$lib/stores/toast';
 	import { byUpdatedDesc } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -55,11 +56,18 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		};
-		await saveCharacter(character);
-		showCreate = false;
-		goto(
-			resolve('/stories/[storyId]/characters/[characterId]', { storyId, characterId: character.id })
-		);
+		try {
+			await saveCharacter(character);
+			showCreate = false;
+			goto(
+				resolve('/stories/[storyId]/characters/[characterId]', {
+					storyId,
+					characterId: character.id
+				})
+			);
+		} catch (err) {
+			showSaveError(`character "${character.name}" (id: ${character.id})`, err);
+		}
 	}
 </script>
 

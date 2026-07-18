@@ -4,6 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { lore, saveLoreEntry } from '$lib/stores/lore';
 	import { activeStory } from '$lib/stores/stories';
+	import { showSaveError } from '$lib/stores/toast';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -49,9 +50,13 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		};
-		await saveLoreEntry(entry);
-		showCreate = false;
-		goto(resolve('/stories/[storyId]/lore/[loreId]', { storyId, loreId: entry.id }));
+		try {
+			await saveLoreEntry(entry);
+			showCreate = false;
+			goto(resolve('/stories/[storyId]/lore/[loreId]', { storyId, loreId: entry.id }));
+		} catch (err) {
+			showSaveError(`lore entry "${entry.title}" (id: ${entry.id})`, err);
+		}
 	}
 </script>
 

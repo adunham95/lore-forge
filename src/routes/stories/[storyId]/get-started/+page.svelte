@@ -5,6 +5,7 @@
 	import { outlineTemplates, applyOutlineTemplate } from '$lib/stores/chapters';
 	import { characters, saveCharacter } from '$lib/stores/characters';
 	import { locations, saveLocation } from '$lib/stores/locations';
+	import { showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import { newId } from '$lib/utils/id';
 	import { defaultAvatarOptions } from '$lib/utils/avatar';
@@ -31,39 +32,48 @@
 		if (!name) return;
 		const id = newId();
 		const timestamp = nowIso();
-		await saveCharacter({
-			id,
-			storyId,
-			name,
-			age: null,
-			job: '',
-			role: 'supporting',
-			appearance: '',
-			personality: '',
-			notes: '',
-			avatar: defaultAvatarOptions(id),
-			relationships: [],
-			createdAt: timestamp,
-			updatedAt: timestamp
-		});
-		newCharacterName = '';
+		try {
+			await saveCharacter({
+				id,
+				storyId,
+				name,
+				age: null,
+				job: '',
+				role: 'supporting',
+				appearance: '',
+				personality: '',
+				notes: '',
+				avatar: defaultAvatarOptions(id),
+				relationships: [],
+				createdAt: timestamp,
+				updatedAt: timestamp
+			});
+			newCharacterName = '';
+		} catch (err) {
+			showSaveError(`character "${name}" (id: ${id})`, err);
+		}
 	}
 
 	async function quickAddLocation() {
 		const name = newLocationName.trim();
 		if (!name) return;
 		const timestamp = nowIso();
-		await saveLocation({
-			id: newId(),
-			storyId,
-			name,
-			type: '',
-			description: '',
-			notes: '',
-			createdAt: timestamp,
-			updatedAt: timestamp
-		});
-		newLocationName = '';
+		const id = newId();
+		try {
+			await saveLocation({
+				id,
+				storyId,
+				name,
+				type: '',
+				description: '',
+				notes: '',
+				createdAt: timestamp,
+				updatedAt: timestamp
+			});
+			newLocationName = '';
+		} catch (err) {
+			showSaveError(`location "${name}" (id: ${id})`, err);
+		}
 	}
 
 	function startWizard(template: OutlineTemplate) {
@@ -87,17 +97,22 @@
 		if (!wizardTemplate) return;
 		finishing = true;
 		const timestamp = nowIso();
-		await saveOutline({
-			storyId,
-			templateId: wizardTemplate.id,
-			templateName: wizardTemplate.name,
-			acts: wizardActs,
-			createdAt: timestamp,
-			updatedAt: timestamp
-		});
-		await applyOutlineTemplate(storyId, wizardTemplate.id);
-		finishing = false;
-		cancelWizard();
+		try {
+			await saveOutline({
+				storyId,
+				templateId: wizardTemplate.id,
+				templateName: wizardTemplate.name,
+				acts: wizardActs,
+				createdAt: timestamp,
+				updatedAt: timestamp
+			});
+			await applyOutlineTemplate(storyId, wizardTemplate.id);
+			cancelWizard();
+		} catch (err) {
+			showSaveError(`outline "${wizardTemplate.name}" (story id: ${storyId})`, err);
+		} finally {
+			finishing = false;
+		}
 	}
 
 	function confirmRestart() {
@@ -132,7 +147,11 @@
 
 		const snapshot = planActs.map((a) => ({ ...a }));
 		const timeoutId = setTimeout(async () => {
-			await saveOutline({ ...current, acts: snapshot });
+			try {
+				await saveOutline({ ...current, acts: snapshot });
+			} catch (err) {
+				showSaveError(`outline plan (story id: ${storyId})`, err);
+			}
 		}, 500);
 
 		return () => clearTimeout(timeoutId);

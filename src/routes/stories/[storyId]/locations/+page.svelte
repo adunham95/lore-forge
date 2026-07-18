@@ -4,6 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { locations, saveLocation } from '$lib/stores/locations';
 	import { activeStory } from '$lib/stores/stories';
+	import { showSaveError } from '$lib/stores/toast';
 	import { byUpdatedDesc } from '$lib/utils/sort';
 	import { newId } from '$lib/utils/id';
 	import { nowIso } from '$lib/utils/date';
@@ -45,11 +46,15 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		};
-		await saveLocation(location);
-		showCreate = false;
-		goto(
-			resolve('/stories/[storyId]/locations/[locationId]', { storyId, locationId: location.id })
-		);
+		try {
+			await saveLocation(location);
+			showCreate = false;
+			goto(
+				resolve('/stories/[storyId]/locations/[locationId]', { storyId, locationId: location.id })
+			);
+		} catch (err) {
+			showSaveError(`location "${location.name}" (id: ${location.id})`, err);
+		}
 	}
 </script>
 

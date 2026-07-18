@@ -11,6 +11,7 @@
 		nextSeriesOrder
 	} from '$lib/stores/stories';
 	import { seriesList, loadSeries, createSeries, saveSeries } from '$lib/stores/series';
+	import { showSaveError } from '$lib/stores/toast';
 	import { byUpdatedDesc, byOrder } from '$lib/utils/sort';
 	import { defaultTheme } from '$lib/utils/theme';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -68,9 +69,13 @@
 			seriesOrder: seriesId ? nextSeriesOrder(seriesId, $stories) : undefined
 		});
 		story.theme = theme;
-		await saveStory(story);
-		showCreate = false;
-		goto(resolve('/stories/[storyId]', { storyId: story.id }));
+		try {
+			await saveStory(story);
+			showCreate = false;
+			goto(resolve('/stories/[storyId]', { storyId: story.id }));
+		} catch (err) {
+			showSaveError(`story "${story.title}" (id: ${story.id})`, err);
+		}
 	}
 
 	function openCreateSeries() {
@@ -82,10 +87,16 @@
 	async function submitCreateSeries(e: SubmitEvent) {
 		e.preventDefault();
 		if (!seriesTitle.trim()) return;
-		await saveSeries(
-			createSeries({ title: seriesTitle.trim(), description: seriesDescription.trim() })
-		);
-		showCreateSeries = false;
+		const series = createSeries({
+			title: seriesTitle.trim(),
+			description: seriesDescription.trim()
+		});
+		try {
+			await saveSeries(series);
+			showCreateSeries = false;
+		} catch (err) {
+			showSaveError(`series "${series.title}" (id: ${series.id})`, err);
+		}
 	}
 </script>
 

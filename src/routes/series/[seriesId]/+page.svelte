@@ -12,7 +12,7 @@
 	} from '$lib/db';
 	import { saveSeries, deleteSeries } from '$lib/stores/series';
 	import { createStory, saveStory, deleteStory, nextSeriesOrder } from '$lib/stores/stories';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import { byOrder, byUpdatedDesc } from '$lib/utils/sort';
 	import { defaultTheme } from '$lib/utils/theme';
 	import { nowIso } from '$lib/utils/date';
@@ -93,14 +93,18 @@
 	async function saveDetails(e: SubmitEvent) {
 		e.preventDefault();
 		if (!series || !editTitle.trim()) return;
-		await saveSeries({
-			...series,
-			title: editTitle.trim(),
-			description: editDescription.trim(),
-			updatedAt: nowIso()
-		});
-		await refresh();
-		showToast('Series saved');
+		try {
+			await saveSeries({
+				...series,
+				title: editTitle.trim(),
+				description: editDescription.trim(),
+				updatedAt: nowIso()
+			});
+			await refresh();
+			showToast('Series saved');
+		} catch (err) {
+			showSaveError(`series "${editTitle.trim()}" (id: ${series.id})`, err);
+		}
 	}
 
 	async function removeSeries() {
@@ -134,9 +138,13 @@
 			seriesOrder: nextSeriesOrder(seriesId, seriesBooks)
 		});
 		story.theme = bookTheme;
-		await saveStory(story);
-		showAddBook = false;
-		await refresh();
+		try {
+			await saveStory(story);
+			showAddBook = false;
+			await refresh();
+		} catch (err) {
+			showSaveError(`book "${story.title}" (id: ${story.id})`, err);
+		}
 	}
 
 	async function removeBook(id: string) {

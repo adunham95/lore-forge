@@ -10,7 +10,7 @@
 		makeLocationStoryOnly
 	} from '$lib/stores/locations';
 	import { activeStory } from '$lib/stores/stories';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
@@ -39,15 +39,19 @@
 	async function save(e: SubmitEvent) {
 		e.preventDefault();
 		if (!location || !name.trim()) return;
-		await saveLocation({
-			...location,
-			name: name.trim(),
-			type: type.trim(),
-			description: description.trim(),
-			notes,
-			updatedAt: nowIso()
-		});
-		showToast('Location saved');
+		try {
+			await saveLocation({
+				...location,
+				name: name.trim(),
+				type: type.trim(),
+				description: description.trim(),
+				notes,
+				updatedAt: nowIso()
+			});
+			showToast('Location saved');
+		} catch (err) {
+			showSaveError(`location "${name.trim()}" (id: ${location.id})`, err);
+		}
 	}
 
 	async function toggleSeriesSharing() {

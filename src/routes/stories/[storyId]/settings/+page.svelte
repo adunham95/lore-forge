@@ -10,7 +10,7 @@
 		stories
 	} from '$lib/stores/stories';
 	import { seriesList, loadSeries } from '$lib/stores/series';
-	import { showToast } from '$lib/stores/toast';
+	import { showToast, showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import Button from '$lib/components/ui/Button.svelte';
 	import ThemePicker from '$lib/components/story/ThemePicker.svelte';
@@ -40,31 +40,44 @@
 
 	async function onSeriesChange() {
 		if (!$activeStory) return;
-		await saveStory({
-			...$activeStory,
-			seriesId: seriesId || undefined,
-			seriesOrder: seriesId ? nextSeriesOrder(seriesId, $stories) : undefined,
-			updatedAt: nowIso()
-		});
+		try {
+			await saveStory({
+				...$activeStory,
+				seriesId: seriesId || undefined,
+				seriesOrder: seriesId ? nextSeriesOrder(seriesId, $stories) : undefined,
+				updatedAt: nowIso()
+			});
+		} catch (err) {
+			showSaveError(`series assignment for "${$activeStory.title}" (id: ${$activeStory.id})`, err);
+		}
 	}
 
 	function onThemeChange(next: StoryTheme) {
 		theme = next;
-		if ($activeStory) saveStory({ ...$activeStory, theme: next, updatedAt: nowIso() });
+		if ($activeStory) {
+			const story = $activeStory;
+			saveStory({ ...story, theme: next, updatedAt: nowIso() }).catch((err) => {
+				showSaveError(`theme for "${story.title}" (id: ${story.id})`, err);
+			});
+		}
 	}
 
 	async function saveDetails(e: SubmitEvent) {
 		e.preventDefault();
 		if (!$activeStory || !theme) return;
-		await saveStory({
-			...$activeStory,
-			title: title.trim(),
-			synopsis: synopsis.trim(),
-			genre: genre.trim(),
-			theme,
-			updatedAt: nowIso()
-		});
-		showToast('Story settings saved');
+		try {
+			await saveStory({
+				...$activeStory,
+				title: title.trim(),
+				synopsis: synopsis.trim(),
+				genre: genre.trim(),
+				theme,
+				updatedAt: nowIso()
+			});
+			showToast('Story settings saved');
+		} catch (err) {
+			showSaveError(`story settings for "${title.trim()}" (id: ${$activeStory.id})`, err);
+		}
 	}
 
 	async function removeStory() {

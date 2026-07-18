@@ -8,6 +8,7 @@
 	import { locations } from '$lib/stores/locations';
 	import { objects } from '$lib/stores/objects';
 	import { focusMode } from '$lib/stores/focus';
+	import { showSaveError } from '$lib/stores/toast';
 	import { nowIso } from '$lib/utils/date';
 	import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
 	import AvatarThumbnail from '$lib/components/avatar/AvatarThumbnail.svelte';
@@ -84,8 +85,13 @@
 			metadata: metadata.map((f) => ({ ...f }))
 		};
 		const timeoutId = setTimeout(async () => {
-			await saveScene({ ...scene, ...snapshot, updatedAt: nowIso() });
-			saveStatus = 'saved';
+			try {
+				await saveScene({ ...scene, ...snapshot, updatedAt: nowIso() });
+				saveStatus = 'saved';
+			} catch (err) {
+				saveStatus = 'idle';
+				showSaveError(`scene "${snapshot.title || 'Untitled'}" (id: ${scene.id})`, err);
+			}
 		}, 500);
 
 		return () => clearTimeout(timeoutId);
