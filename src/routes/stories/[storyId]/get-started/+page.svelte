@@ -336,7 +336,12 @@
 				<h2 class="font-serif text-xl">{act.name}</h2>
 				<p class="mt-1 text-sm text-text-secondary italic">{act.guidance}</p>
 				<div class="mt-3">
-					<MarkdownViewer html={act.description} />
+					s
+					<MarkdownEditor
+						bind:value={act.description}
+						rows={5}
+						placeholder="What happens in this act?"
+					/>
 				</div>
 			</div>
 		{/each}
