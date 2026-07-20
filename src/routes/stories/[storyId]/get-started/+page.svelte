@@ -14,7 +14,6 @@
 	import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
 	import CustomOutlineBuilder from '$lib/components/story/CustomOutlineBuilder.svelte';
 	import type { OutlineTemplate, StoryOutlineAct } from '$lib/types';
-	import MarkdownViewer from '$lib/components/editor/MarkdownViewer.svelte';
 
 	const storyId = $derived(page.params.storyId as string);
 
