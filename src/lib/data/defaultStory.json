@@ -1,0 +1,374 @@
+{
+	"story": {
+		"id": "seed-story-salt-iron-covenant",
+		"title": "The Salt-Iron Covenant",
+		"synopsis": "When the tide-priests of Vessport start dying with rusted iron in their veins, a disgraced privateer and the man who court-martialed her have to uncover which of the city's Houses is feeding people to the sea — before the pact holding back the drowned gods collapses entirely.",
+		"genre": "Dark fantasy",
+		"theme": {
+			"preset": "ocean",
+			"accentLight": "#1A6E8A",
+			"accentDark": "#5BB8D4",
+			"accentSoft": "#D3E9EF",
+			"accentSoftDark": "#123542",
+			"accentText": "#FFFFFF"
+		},
+		"createdAt": "2026-07-25T12:00:00.000Z",
+		"updatedAt": "2026-07-25T12:00:00.000Z"
+	},
+	"characters": [
+		{
+			"id": "seed-char-mire",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "Mirelle \"Mire\" Kastellan",
+			"age": 34,
+			"job": "Privateer captain, formerly a Navy lieutenant",
+			"role": "protagonist",
+			"appearance": "Sun-cracked skin the color of old rope, a knife-scar through one eyebrow that makes her look perpetually skeptical. Keeps her graying black hair cropped short — no time for vanity on a working deck. Missing the last two fingers on her left hand, lost to a cistern-eel bite she never talks about; wears a leather wrap over the stumps instead of the ornamental hook her crew keeps threatening to gift her. Favors a salt-stiffened officer's coat two ranks above the one she was actually discharged at, sleeves rolled to the elbow.",
+			"personality": "Mire leads by outworking everyone, not by charm — she's first on the rope and last one paid. She trusts actions over words, which makes her a lousy politician and an easy person to follow into a fight. Underneath the competence is a temper she keeps on a short leash, and a stubborn refusal to ask for help that has nearly gotten her crew killed twice. She jokes constantly when she's afraid and goes dead quiet when she's actually in control of a situation — anyone who's sailed with her long enough learns to read it backwards.",
+			"notes": "## Backstory\nMire was court-martialed eleven years ago for refusing a direct order from then-Lieutenant Iskander Voss to leave a boarding party behind during the Cistern Riots. She was right that the order was cowardice — but she struck a superior officer to disobey it, and the Navy doesn't care who was right. She's spent the decade since running cargo (and occasionally contraband) along the Vessport coast, rebuilding a reputation one delivered shipment at a time.\n\n## Want vs. Need\n**Wants:** her commission back, and Iskander's career ruined in the process.\n**Needs:** to stop measuring her worth by a Navy that already gave her its answer once.\nThe story should force a choice between the two — petty vindication over Iskander, or getting the truth about the Covenant out. Not both.\n\n## The Secret\nShe's kept one of the sailors from that boarding party alive in hiding for eleven years — the one witness who could prove Iskander's order got people killed. She's been too afraid of what it would cost him to ever use that. That fear is the real reason she never cleared her name.\n\n## Flaw\nWon't ask for help until it's nearly too late, and mistakes stubbornness for strength. Her crew has stopped believing her when she says she's fine.\n\n## Voice & Mannerisms\nSwears in dockhand slang, never in Navy formal speech, even under pressure — a small, constant rejection of the institution that discarded her. Taps two fingers of her intact hand against her thigh when she's lying.",
+			"avatar": {
+				"seed": "seed-char-mire",
+				"skinColor": "#edb98a",
+				"hairStyle": "shortFlat",
+				"hairColor": "#2c1b18",
+				"facialHairStyle": "none",
+				"eyeStyle": "default",
+				"eyebrowStyle": "default",
+				"mouthStyle": "default",
+				"clothingStyle": "hoodie",
+				"clothingColor": "#3c4f5c",
+				"accessoryStyle": "none",
+				"backgroundColor": "#d1d4f9"
+			},
+			"relationships": [
+				{
+					"targetCharacterId": "seed-char-iskander",
+					"label": "Court-martialed her",
+					"description": "The officer whose order she disobeyed — and the man she's spent eleven years wanting to ruin."
+				},
+				{
+					"targetCharacterId": "seed-char-cor",
+					"label": "Quartermaster and conscience",
+					"description": "Sailed with her since before the court-martial; the only one who knows about the hidden witness."
+				},
+				{
+					"targetCharacterId": "seed-char-thessaly",
+					"label": "Uneasy ally",
+					"description": "A House heir who pays well and lies constantly; Mire uses her for information and trusts her for nothing."
+				}
+			],
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-char-iskander",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "Iskander Voss",
+			"age": 52,
+			"job": "Warden-Speaker of the Tide Covenant, formerly a Navy commander",
+			"role": "antagonist",
+			"appearance": "Immaculate in Covenant vestments the color of drowned kelp; silver hair oiled flat, hands soft in a way that says he hasn't hauled a line in twenty years. A voice trained to fill a cistern chamber without shouting. Wears a chain of fused iron links at his collar — a mark of rank he tells the congregation is purely ceremonial. It isn't.",
+			"personality": "Iskander genuinely believes he is saving Vessport, which makes him far more dangerous than a man who knows he's the villain. He's patient, precise, and allergic to anything he can't control, including his own guilt. He never raises his voice; he doesn't need to — people who cross him tend to have accidents. In the quiet hours he's fully aware of what he's become, and hates that awareness more than anything Mire could ever say to him.",
+			"notes": "## Backstory\nIskander gave the order that got sailors killed during the Cistern Riots because he believed — correctly, as it turned out — that the tide-priests' rite that day couldn't be interrupted without the drowned gods' pact lapsing. He let a court-martial fall on Mire rather than admit the Covenant needed those deaths to happen. He's been Warden-Speaker for nine years, and every year the rite demands a little more than the last.\n\n## Want vs. Need\n**Wants:** to keep the Covenant intact and Vessport safe, whatever the cost — that's the lie he tells himself.\n**Needs:** to admit the \"cost\" has become the actual sacrifice of the people he swore to protect, not a regrettable side effect of protecting them.\n\n## The Secret\nThe rite's price has been quietly rising for years, and Iskander has been selecting the sacrifices himself — always people who won't be missed, always with paperwork that makes it read as accident or disappearance. He's told no one, including the other two Houses, how close the rite is to failing outright.\n\n## Voice & Mannerisms\nNever says \"kill\" or \"sacrifice\" — always \"the rite requires,\" passive voice doing the moral work for him. Touches the iron chain at his collar when he's about to lie.",
+			"avatar": {
+				"seed": "seed-char-iskander",
+				"skinColor": "#edb98a",
+				"hairStyle": "shortFlat",
+				"hairColor": "#c0c0c0",
+				"facialHairStyle": "none",
+				"eyeStyle": "default",
+				"eyebrowStyle": "default",
+				"mouthStyle": "default",
+				"clothingStyle": "hoodie",
+				"clothingColor": "#2d4a3e",
+				"accessoryStyle": "none",
+				"backgroundColor": "#d1d4f9"
+			},
+			"relationships": [
+				{
+					"targetCharacterId": "seed-char-mire",
+					"label": "The officer he ruined",
+					"description": "Sees her court-martial as a regrettable necessity, not an injustice — and is unsettled by how little that conviction still comforts him."
+				}
+			],
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-char-thessaly",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "Thessaly Rook",
+			"age": 29,
+			"job": "Heir to House Rook; runs an information trade under the family's shipping business",
+			"role": "supporting",
+			"appearance": "Dresses one social rank down from her actual station on purpose — plain wool over silk, no House colors — so she can move through the docks unrecognized. Sharp chin, sharper eyes, a habit of watching doorways instead of the person she's talking to. Wears a different ring on a different finger depending on which of her three aliases she's currently using.",
+			"personality": "Thessaly treats loyalty as a currency to be spent carefully, not a virtue — she'll help whoever's winning, and she's very good at guessing who that'll be. She's not cruel, just allergic to being on the losing side of anything after watching House Rook nearly collapse once already under her father. Underneath the calculation is someone who actually wants to be talked out of it, if anyone ever bothered to try.",
+			"notes": "## Backstory\nHouse Rook nearly lost its seat on the ruling council when Thessaly was nineteen, after her father backed the wrong faction in a succession dispute. She rebuilt the family's standing herself over the following decade by making sure she always had leverage on everyone — which means she now knows more of Vessport's secrets than anyone alive, including several of Iskander's.\n\n## Want vs. Need\n**Wants:** House Rook's position secured beyond any future threat.\n**Needs:** one relationship that isn't transactional — proof to herself she's not just her father's daughter doing the same math with better numbers.\n\n## The Secret\nShe's known for two years that the Covenant's sacrifices were increasing. She's been sitting on the information, waiting to see which way to sell it, rather than acting on it — a choice whose cost, in bodies, she'll eventually have to reckon with.",
+			"avatar": {
+				"seed": "seed-char-thessaly",
+				"skinColor": "#edb98a",
+				"hairStyle": "shortFlat",
+				"hairColor": "#3b2519",
+				"facialHairStyle": "none",
+				"eyeStyle": "default",
+				"eyebrowStyle": "default",
+				"mouthStyle": "default",
+				"clothingStyle": "hoodie",
+				"clothingColor": "#5b2d3a",
+				"accessoryStyle": "none",
+				"backgroundColor": "#d1d4f9"
+			},
+			"relationships": [
+				{
+					"targetCharacterId": "seed-char-mire",
+					"label": "Information broker",
+					"description": "Sells Mire what she needs to know, at a price Mire can't always afford — money or otherwise."
+				}
+			],
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-char-cor",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "Corvain \"Old Cor\" Ashe",
+			"age": 61,
+			"job": "Quartermaster aboard the Gull's Reprieve",
+			"role": "supporting",
+			"appearance": "Built like a barrel that's taken in water; forearms a solid mass of old rope-burn scars. Wears his white hair in a single long braid, a habit left over from a religious order he walked away from decades ago. Reading glasses he pretends he doesn't need, perched on a nose broken at least three times.",
+			"personality": "Cor is the crew's actual moral compass, though he'd never claim the title — he's the one who quietly pays a dead sailor's family out of his own cut, the one who talks Mire down before her temper costs them a client. He carries old guilt about the Covenant he once served in, which makes him equal parts useful and unwilling whenever the crew gets close to it.",
+			"notes": "## Backstory\nBefore he was a quartermaster, Cor spent fifteen years as a low-ranked tide-priest in the Covenant, until he saw the rite take someone he loved and walked away from the order entirely. Mire found him half-starved on the Vessport docks eight years ago and gave him a berth without asking questions — a debt he's still quietly repaying.\n\n## Want vs. Need\n**Wants:** to keep his past buried and his current family — the crew — safe.\n**Needs:** to finally use what he knows about the Covenant's rites, even though it means reopening the worst thing that ever happened to him.\n\n## The Secret\nHe knows exactly how the sacrificial rite works, and exactly what it takes to break it — knowledge that could end the Covenant's grip on Vessport, if he can bring himself to speak about the night he lost everything.",
+			"avatar": {
+				"seed": "seed-char-cor",
+				"skinColor": "#edb98a",
+				"hairStyle": "shortFlat",
+				"hairColor": "#e8e8e8",
+				"facialHairStyle": "none",
+				"eyeStyle": "default",
+				"eyebrowStyle": "default",
+				"mouthStyle": "default",
+				"clothingStyle": "hoodie",
+				"clothingColor": "#4a4235",
+				"accessoryStyle": "none",
+				"backgroundColor": "#d1d4f9"
+			},
+			"relationships": [
+				{
+					"targetCharacterId": "seed-char-mire",
+					"label": "Captain he'd die for",
+					"description": "She gave him a second life when the Covenant took his first one; he's never told her why he really left the order."
+				}
+			],
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		}
+	],
+	"locations": [
+		{
+			"id": "seed-loc-vessport",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "Vessport",
+			"type": "City",
+			"description": "A city built in tiers up a black-cliff harbor, held together by a centuries-old pact with the drowned gods beneath its founding cistern. Three Houses share rule of it, uneasily, under the Tide Covenant's religious authority.",
+			"notes": "The lower tiers flood at every high spring tide by design — a controlled sacrifice of streets that keeps the deeper cisterns from flooding the whole city. Locals call it \"paying the toll.\"",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-loc-cistern",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "The Covenant Cistern",
+			"type": "Temple / Sacred site",
+			"description": "The original cistern the city was founded around, now the Tide Covenant's central shrine. A descending spiral of black-water pools, each older and deeper than the last, said to reach the drowned gods themselves at the bottom.",
+			"notes": "Only Warden-rank priests are permitted past the third pool. Iskander goes down to the fifth alone, and no one below him knows what's actually down there anymore.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-loc-gulls-reprieve",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "The Gull's Reprieve",
+			"type": "Ship — privateer schooner",
+			"description": "Mire's ship, fast and unglamorous, patched together from three decades of cheaper repairs than her original owners intended. Named half-sincerely, half as a joke about how rarely the crew actually gets one.",
+			"notes": "The lower hold has a false bottom Cor built without telling Mire why — she found out what it was for the day she needed to hide someone in a hurry.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		}
+	],
+	"objects": [
+		{
+			"id": "seed-obj-salt-iron-chain",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "The Salt-Iron Chain",
+			"type": "Relic",
+			"description": "The physical anchor of the Covenant's pact — a chain of fused iron worn by whoever holds the Warden-Speaker's office, said to bind the drowned gods' hunger to the rite instead of the open sea.",
+			"notes": "Each Warden-Speaker adds a link at their investiture. Iskander's has grown noticeably heavier over his nine years — a detail he's careful no one else gets close enough to notice.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-obj-compass",
+			"storyId": "seed-story-salt-iron-covenant",
+			"name": "Mire's Compass",
+			"type": "Keepsake",
+			"description": "A battered brass compass that hasn't pointed true north in years — it points, instead, toward whatever Mire is most afraid of losing. Neither she nor Cor can explain why.",
+			"notes": "The last thing her father gave her before his ship went down. She tells people it's just sentimental and broken. She's not entirely sure that's true.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		}
+	],
+	"lore": [
+		{
+			"id": "seed-lore-tide-covenant",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Tide Covenant",
+			"category": "Magic System",
+			"content": "Centuries ago, Vessport's founders struck a pact with the drowned gods beneath the harbor: the city could be built on reclaimed tidal flats so long as it paid a regular price back to the sea. The Covenant — both the religious order and the pact itself — administers that price through rites performed in the founding cistern.\n\nWhat the rite actually costs has been deliberately vague for generations. Officially: valuables, ceremonial objects, controlled flooding of the lower tiers. Unofficially, and increasingly: people, chosen quietly enough that the city can keep believing the official version.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-lore-founding",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Founding of Vessport",
+			"category": "History",
+			"content": "Before the Covenant, the harbor now called Vessport was an unstable tidal flat that flooded twice a season, uninhabitable by any conventional means. The first settlers — a coalition of three trading families, ancestors of the modern Houses — struck the original pact rather than abandon a harbor with the best deepwater anchorage on the coast.\n\nThe Three Houses have shared civic rule ever since, in a balance of power the Covenant's religious authority is supposed to sit outside of — a separation that has eroded significantly under the current Warden-Speaker.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-lore-three-houses",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Three Houses",
+			"category": "Factions",
+			"content": "House Rook (shipping and information), House Ashworth (the harbor guard and civic law), and House Venn (the tiered city's landlords) have jointly ruled Vessport's secular affairs since its founding, each holding a check on the other two. All three formally answer to the Tide Covenant on matters of the pact — a boundary Iskander Voss has spent nine years quietly pushing past.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-lore-drowned-king",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Drowned King",
+			"category": "Myth",
+			"content": "Dockside legend holds that the drowned gods were once a single king, betrayed by his own court and pulled under the sea by their hands. The Covenant dismisses it publicly as a folk story — but tide-priests are taught a private version that isn't dismissive at all: that the King remembers his betrayal, and that every rite is less an offering than a payment to keep him from surfacing to collect it himself.",
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		}
+	],
+	"chapters": [
+		{
+			"id": "seed-chap-01",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "A Debt in Dead Men's Coin",
+			"act": "Act 1 - Setup",
+			"order": 0,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-02",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Warden-Speaker's Summons",
+			"act": "Act 1 - Setup",
+			"order": 1,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-03",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "What Thessaly Already Knows",
+			"act": "Act 1 - Setup",
+			"order": 2,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-04",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Fifth Pool",
+			"act": "Act 2 - Confrontation",
+			"order": 3,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-05",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "Old Cor's Confession",
+			"act": "Act 2 - Confrontation",
+			"order": 4,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-06",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Ledger of the Missing",
+			"act": "Act 2 - Confrontation",
+			"order": 5,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-07",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "A House Divided",
+			"act": "Act 2 - Confrontation",
+			"order": 6,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-08",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "The Early Rite",
+			"act": "Act 3 - Resolution",
+			"order": 7,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-09",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "What the Witness Says",
+			"act": "Act 3 - Resolution",
+			"order": 8,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		},
+		{
+			"id": "seed-chap-10",
+			"storyId": "seed-story-salt-iron-covenant",
+			"title": "Salt and Iron",
+			"act": "Act 3 - Resolution",
+			"order": 9,
+			"createdAt": "2026-07-25T12:00:00.000Z",
+			"updatedAt": "2026-07-25T12:00:00.000Z"
+		}
+	],
+	"outline": {
+		"storyId": "seed-story-salt-iron-covenant",
+		"templateId": "three-act",
+		"templateName": "Three-Act Structure",
+		"acts": [
+			{
+				"name": "Act 1 - Setup",
+				"guidance": "Introduce your protagonist, their world, and the event that kicks the story into motion. What's normal life, and what breaks it?",
+				"description": "Mire is running contraband through Vessport's lower tiers when a former shipmate — one of the boarding party she got court-martialed defending eleven years ago — turns up dead, drained and stiff with rusted iron under his skin, exactly like two dockworkers the week before. The deaths are being filed as accidents. Investigating pulls her back into contact with Iskander for the first time since the court-martial, and Thessaly Rook offers to sell her what House Rook already knows — for a price Mire can't yet afford."
+			},
+			{
+				"name": "Act 2 - Confrontation",
+				"guidance": "Your protagonist pursues their goal against mounting obstacles, hitting a midpoint that raises the stakes. What stands in their way, and how do things get worse before they get better?",
+				"description": "Mire and Cor go looking for proof in the Covenant Cistern itself and find far more than they bargained for — the rite's price has been climbing for years, and Iskander has been choosing who pays it. At the midpoint, Cor finally tells Mire why he really left the Covenant, and what it would take to break the rite instead of just exposing it. Thessaly, sitting on evidence of her own, has to decide whether continuing to hide it is a position she can still defend to herself."
+			},
+			{
+				"name": "Act 3 - Resolution",
+				"guidance": "The conflict comes to a head and resolves. How does the story's central question get answered, and where do your characters land?",
+				"description": "With the rite's true cost exposed to all Three Houses, Iskander moves to perform an early rite before he can be stopped — one large enough to end the questions permanently. Mire has to choose between the vindication she's wanted for eleven years and getting the truth out in time to stop him, and the hidden witness she's protected finally gets a say in his own testimony. The Covenant survives, but not the way Iskander built it — and not without a cost the Houses will be paying for years."
+			}
+		],
+		"createdAt": "2026-07-25T12:00:00.000Z",
+		"updatedAt": "2026-07-25T12:00:00.000Z"
+	}
+}

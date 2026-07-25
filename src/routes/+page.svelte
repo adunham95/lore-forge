@@ -12,6 +12,7 @@
 	} from '$lib/stores/stories';
 	import { seriesList, loadSeries, createSeries, saveSeries } from '$lib/stores/series';
 	import { showSaveError } from '$lib/stores/toast';
+	import { ensureDefaultStorySeed } from '$lib/seed';
 	import { byUpdatedDesc, byOrder } from '$lib/utils/sort';
 	import { defaultTheme } from '$lib/utils/theme';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -44,7 +45,8 @@
 		}))
 	);
 
-	onMount(() => {
+	onMount(async () => {
+		await ensureDefaultStorySeed();
 		loadStories();
 		loadSeries();
 	});
