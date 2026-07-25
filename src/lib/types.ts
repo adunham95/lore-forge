@@ -21,6 +21,8 @@ export interface Story {
 	theme: StoryTheme;
 	seriesId?: string;
 	seriesOrder?: number; // book position within the series
+	// When true, this story (and anything scoped only to it) is excluded from device sync.
+	private?: boolean;
 	createdAt: string; // ISO 8601
 	updatedAt: string;
 }
@@ -193,4 +195,23 @@ export interface WritingPrompt {
 export interface AppSettings {
 	darkMode: boolean;
 	editorFontSize: number; // px, default 16
+	// Generated on first launch. Doubles as the sync bundle's storage key and its
+	// bearer secret — anyone syncing with the same code shares the same data.
+	syncCode?: string;
+	lastSyncedAt?: string; // ISO 8601, set after a successful sync
+}
+
+/** Every entity that can travel in a sync bundle, plus the metadata describing the bundle itself. */
+export interface SyncBundle {
+	version: 1;
+	exportedAt: string; // ISO 8601
+	stories: Story[];
+	series: Series[];
+	characters: Character[];
+	locations: Location[];
+	objects: StoryObject[];
+	lore: LoreEntry[];
+	chapters: Chapter[];
+	scenes: Scene[];
+	outlines: StoryOutline[];
 }

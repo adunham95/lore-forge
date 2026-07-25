@@ -53,6 +53,12 @@
 				>
 					Prompts
 				</a>
+				<a
+					href={resolve('/settings')}
+					class="flex min-h-11 items-center rounded-md border border-border bg-surface-raised px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary"
+				>
+					Settings
+				</a>
 				<button
 					onclick={toggleDarkMode}
 					class="min-h-11 rounded-md border border-border bg-surface-raised px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary"

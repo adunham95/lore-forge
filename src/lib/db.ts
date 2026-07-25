@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable, type Table } from 'dexie';
+import { nowIso } from './utils/date';
 import type {
 	Story,
 	Series,
@@ -10,7 +11,8 @@ import type {
 	Scene,
 	StoryOutline,
 	WritingPrompt,
-	AppSettings
+	AppSettings,
+	SyncBundle
 } from './types';
 
 class SwbDatabase extends Dexie {
@@ -253,7 +255,16 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 
 	await db.transaction(
 		'rw',
-		[db.stories, db.characters, db.locations, db.objects, db.lore, db.chapters, db.scenes, db.outlines],
+		[
+			db.stories,
+			db.characters,
+			db.locations,
+			db.objects,
+			db.lore,
+			db.chapters,
+			db.scenes,
+			db.outlines
+		],
 		async () => {
 			const [characterKeys, locationKeys, objectKeys, loreKeys, chapterKeys, sceneKeys] =
 				await Promise.all([
@@ -337,4 +348,97 @@ export async function getSettings(): Promise<AppSettings | undefined> {
 
 export async function saveSettings(settings: AppSettings): Promise<void> {
 	await db.settings.put(settings, 'app');
+}
+
+/** Puts `rows` whose `updatedAt` is newer than the local copy (or that don't exist locally yet). */
+async function upsertNewer<T extends { updatedAt: string }>(
+	table: Table<T, string>,
+	keyField: keyof T,
+	rows: T[]
+): Promise<void> {
+	if (rows.length === 0) return;
+	const existing = await table.toArray();
+	const existingByKey = new Map(existing.map((row) => [row[keyField], row]));
+	const toPut = rows.filter((row) => {
+		const local = existingByKey.get(row[keyField]);
+		return !local || local.updatedAt < row.updatedAt;
+	});
+	if (toPut.length > 0) await table.bulkPut(toPut);
+}
+
+/**
+ * Builds the payload pushed to the sync endpoint: everything except stories marked
+ * `private` (and story-only entities that belong to them). Series-shared entities are kept
+ * if any book in their series is still synced, since another synced story may depend on them.
+ */
+export async function buildSyncBundle(): Promise<SyncBundle> {
+	const [stories, series, characters, locations, objects, lore, chapters, scenes, outlines] =
+		await Promise.all([
+			db.stories.toArray(),
+			db.series.toArray(),
+			db.characters.toArray(),
+			db.locations.toArray(),
+			db.objects.toArray(),
+			db.lore.toArray(),
+			db.chapters.toArray(),
+			db.scenes.toArray(),
+			db.outlines.toArray()
+		]);
+
+	const syncedStories = stories.filter((s) => !s.private);
+	const syncedStoryIds = new Set(syncedStories.map((s) => s.id));
+	const syncedSeriesIds = new Set(
+		syncedStories.filter((s) => s.seriesId).map((s) => s.seriesId as string)
+	);
+	const includeShared = (entity: { storyId?: string; seriesId?: string }) =>
+		(entity.storyId !== undefined && syncedStoryIds.has(entity.storyId)) ||
+		(entity.seriesId !== undefined && syncedSeriesIds.has(entity.seriesId));
+
+	return {
+		version: 1,
+		exportedAt: nowIso(),
+		stories: syncedStories,
+		series: series.filter((s) => syncedSeriesIds.has(s.id)),
+		characters: characters.filter(includeShared),
+		locations: locations.filter(includeShared),
+		objects: objects.filter(includeShared),
+		lore: lore.filter(includeShared),
+		chapters: chapters.filter((c) => syncedStoryIds.has(c.storyId)),
+		scenes: scenes.filter((sc) => syncedStoryIds.has(sc.storyId)),
+		outlines: outlines.filter((o) => syncedStoryIds.has(o.storyId))
+	};
+}
+
+/**
+ * Merges a pulled sync bundle into the local database — per entity, the newer `updatedAt`
+ * wins. Entities missing from the bundle are left alone rather than deleted: sync only ever
+ * adds or updates, so a private story stays put and a deletion on one device doesn't
+ * currently propagate as a deletion on another.
+ */
+export async function applySyncBundle(bundle: SyncBundle): Promise<void> {
+	await db.transaction(
+		'rw',
+		[
+			db.stories,
+			db.series,
+			db.characters,
+			db.locations,
+			db.objects,
+			db.lore,
+			db.chapters,
+			db.scenes,
+			db.outlines
+		],
+		async () => {
+			await upsertNewer(db.stories, 'id', bundle.stories);
+			await upsertNewer(db.series, 'id', bundle.series);
+			await upsertNewer(db.characters, 'id', bundle.characters);
+			await upsertNewer(db.locations, 'id', bundle.locations);
+			await upsertNewer(db.objects, 'id', bundle.objects);
+			await upsertNewer(db.lore, 'id', bundle.lore);
+			await upsertNewer(db.chapters, 'id', bundle.chapters);
+			await upsertNewer(db.scenes, 'id', bundle.scenes);
+			await upsertNewer(db.outlines, 'storyId', bundle.outlines);
+		}
+	);
 }

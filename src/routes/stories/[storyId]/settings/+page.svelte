@@ -38,6 +38,16 @@
 		}
 	});
 
+	async function togglePrivate() {
+		if (!$activeStory) return;
+		const story = $activeStory;
+		try {
+			await saveStory({ ...story, private: !story.private, updatedAt: nowIso() });
+		} catch (err) {
+			showSaveError(`privacy setting for "${story.title}" (id: ${story.id})`, err);
+		}
+	}
+
 	async function onSeriesChange() {
 		if (!$activeStory) return;
 		try {
@@ -152,6 +162,25 @@
 					View series &rarr;
 				</a>
 			{/if}
+		</div>
+
+		<div class="mt-8 border-t border-border pt-6">
+			<h2 class="mb-3 font-serif text-xl">Sync</h2>
+			<label class="flex items-start gap-2 text-sm">
+				<input
+					type="checkbox"
+					checked={$activeStory.private ?? false}
+					onchange={togglePrivate}
+					class="mt-0.5"
+				/>
+				<span>
+					Keep this story on this device only
+					<span class="block text-text-secondary">
+						Excludes it (and everything only used in it) from sync — see
+						<a href={resolve('/settings')} class="text-accent hover:underline">Settings</a>.
+					</span>
+				</span>
+			</label>
 		</div>
 
 		<div class="mt-8 border-t border-border pt-6">
