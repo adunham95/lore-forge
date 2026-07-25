@@ -192,6 +192,16 @@ export interface WritingPrompt {
 	updatedAt: string;
 }
 
+export interface WritersBlockEntry {
+	id: string;
+	title: string;
+	content: string; // Markdown
+	storyId?: string; // optional link to a single story
+	characterIds: string[]; // optional links to characters within storyId
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface AppSettings {
 	darkMode: boolean;
 	editorFontSize: number; // px, default 16
@@ -214,4 +224,5 @@ export interface SyncBundle {
 	chapters: Chapter[];
 	scenes: Scene[];
 	outlines: StoryOutline[];
+	writersBlock: WritersBlockEntry[];
 }

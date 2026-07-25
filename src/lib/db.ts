@@ -11,6 +11,7 @@ import type {
 	Scene,
 	StoryOutline,
 	WritingPrompt,
+	WritersBlockEntry,
 	AppSettings,
 	SyncBundle
 } from './types';
@@ -26,6 +27,7 @@ class SwbDatabase extends Dexie {
 	scenes!: EntityTable<Scene, 'id'>;
 	outlines!: EntityTable<StoryOutline, 'storyId'>;
 	prompts!: EntityTable<WritingPrompt, 'id'>;
+	writersBlock!: EntityTable<WritersBlockEntry, 'id'>;
 	settings!: Table<AppSettings, string>;
 
 	constructor() {
@@ -71,6 +73,10 @@ class SwbDatabase extends Dexie {
 
 		this.version(7).stores({
 			prompts: 'id'
+		});
+
+		this.version(8).stores({
+			writersBlock: 'id, storyId'
 		});
 	}
 }
@@ -194,6 +200,10 @@ export async function getAllPrompts(): Promise<WritingPrompt[]> {
 	return db.prompts.toArray();
 }
 
+export async function getAllWritersBlockEntries(): Promise<WritersBlockEntry[]> {
+	return db.writersBlock.toArray();
+}
+
 interface EntityValueMap {
 	stories: Story;
 	series: Series;
@@ -204,6 +214,7 @@ interface EntityValueMap {
 	chapters: Chapter;
 	scenes: Scene;
 	prompts: WritingPrompt;
+	writersBlock: WritersBlockEntry;
 }
 
 type EntityStore = keyof EntityValueMap;
@@ -263,17 +274,19 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 			db.lore,
 			db.chapters,
 			db.scenes,
-			db.outlines
+			db.outlines,
+			db.writersBlock
 		],
 		async () => {
-			const [characterKeys, locationKeys, objectKeys, loreKeys, chapterKeys, sceneKeys] =
+			const [characterKeys, locationKeys, objectKeys, loreKeys, chapterKeys, sceneKeys, writersBlockKeys] =
 				await Promise.all([
 					db.characters.where('storyId').equals(storyId).primaryKeys(),
 					db.locations.where('storyId').equals(storyId).primaryKeys(),
 					db.objects.where('storyId').equals(storyId).primaryKeys(),
 					db.lore.where('storyId').equals(storyId).primaryKeys(),
 					db.chapters.where('storyId').equals(storyId).primaryKeys(),
-					db.scenes.where('storyId').equals(storyId).primaryKeys()
+					db.scenes.where('storyId').equals(storyId).primaryKeys(),
+					db.writersBlock.where('storyId').equals(storyId).primaryKeys()
 				]);
 
 			await Promise.all([
@@ -284,7 +297,8 @@ export async function removeStoryCascade(storyId: string): Promise<void> {
 				db.lore.bulkDelete([...loreKeys, ...orphanedSharedLoreKeys]),
 				db.chapters.bulkDelete(chapterKeys),
 				db.scenes.bulkDelete(sceneKeys),
-				db.outlines.delete(storyId)
+				db.outlines.delete(storyId),
+				db.writersBlock.bulkDelete(writersBlockKeys)
 			]);
 		}
 	);
@@ -372,18 +386,29 @@ async function upsertNewer<T extends { updatedAt: string }>(
  * if any book in their series is still synced, since another synced story may depend on them.
  */
 export async function buildSyncBundle(): Promise<SyncBundle> {
-	const [stories, series, characters, locations, objects, lore, chapters, scenes, outlines] =
-		await Promise.all([
-			db.stories.toArray(),
-			db.series.toArray(),
-			db.characters.toArray(),
-			db.locations.toArray(),
-			db.objects.toArray(),
-			db.lore.toArray(),
-			db.chapters.toArray(),
-			db.scenes.toArray(),
-			db.outlines.toArray()
-		]);
+	const [
+		stories,
+		series,
+		characters,
+		locations,
+		objects,
+		lore,
+		chapters,
+		scenes,
+		outlines,
+		writersBlock
+	] = await Promise.all([
+		db.stories.toArray(),
+		db.series.toArray(),
+		db.characters.toArray(),
+		db.locations.toArray(),
+		db.objects.toArray(),
+		db.lore.toArray(),
+		db.chapters.toArray(),
+		db.scenes.toArray(),
+		db.outlines.toArray(),
+		db.writersBlock.toArray()
+	]);
 
 	const syncedStories = stories.filter((s) => !s.private);
 	const syncedStoryIds = new Set(syncedStories.map((s) => s.id));
@@ -405,7 +430,8 @@ export async function buildSyncBundle(): Promise<SyncBundle> {
 		lore: lore.filter(includeShared),
 		chapters: chapters.filter((c) => syncedStoryIds.has(c.storyId)),
 		scenes: scenes.filter((sc) => syncedStoryIds.has(sc.storyId)),
-		outlines: outlines.filter((o) => syncedStoryIds.has(o.storyId))
+		outlines: outlines.filter((o) => syncedStoryIds.has(o.storyId)),
+		writersBlock: writersBlock.filter((e) => !e.storyId || syncedStoryIds.has(e.storyId))
 	};
 }
 
@@ -427,7 +453,8 @@ export async function applySyncBundle(bundle: SyncBundle): Promise<void> {
 			db.lore,
 			db.chapters,
 			db.scenes,
-			db.outlines
+			db.outlines,
+			db.writersBlock
 		],
 		async () => {
 			await upsertNewer(db.stories, 'id', bundle.stories);
@@ -439,6 +466,7 @@ export async function applySyncBundle(bundle: SyncBundle): Promise<void> {
 			await upsertNewer(db.chapters, 'id', bundle.chapters);
 			await upsertNewer(db.scenes, 'id', bundle.scenes);
 			await upsertNewer(db.outlines, 'storyId', bundle.outlines);
+			await upsertNewer(db.writersBlock, 'id', bundle.writersBlock);
 		}
 	);
 }
