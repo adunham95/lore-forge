@@ -44,7 +44,7 @@
 
 <svelte:head><title>Settings</title></svelte:head>
 
-<div class="max-w-2xl">
+<div class="max-w-2xl px-6 py-4">
 	<h1 class="font-serif text-3xl">Settings</h1>
 
 	<div class="mt-8 border-t border-border pt-6">
