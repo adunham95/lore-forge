@@ -142,14 +142,14 @@
 					</div>
 					<div class="flex flex-col gap-3 border-l-2 border-border pl-4">
 						{#each group.books as story (story.id)}
-							<BookRow {story} onDelete={() => deleteStory(story.id)} />
+							<BookRow {story} />
 						{/each}
 					</div>
 				</div>
 			{/each}
 
 			{#each standaloneStories as story (story.id)}
-				<BookRow {story} onDelete={() => deleteStory(story.id)} />
+				<BookRow {story} />
 			{/each}
 
 			<button

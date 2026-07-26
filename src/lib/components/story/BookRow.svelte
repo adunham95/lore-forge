@@ -6,24 +6,11 @@
 
 	interface Props {
 		story: Story;
-		onDelete: () => void;
 	}
 
-	let { story, onDelete }: Props = $props();
+	let { story }: Props = $props();
 	let theme = $derived(resolveTheme(story.theme));
 	let href = $derived(resolve('/stories/[storyId]', { storyId: story.id }));
-
-	function confirmDelete(e: MouseEvent) {
-		e.preventDefault();
-		e.stopPropagation();
-		if (
-			confirm(
-				`Delete "${story.title}"? This removes all its characters, locations, lore, and scenes.`
-			)
-		) {
-			onDelete();
-		}
-	}
 </script>
 
 <a
@@ -53,12 +40,4 @@
 			<p class="mt-1 line-clamp-2 text-sm text-text-secondary">{story.synopsis}</p>
 		{/if}
 	</div>
-
-	<button
-		onclick={confirmDelete}
-		aria-label="Delete story"
-		class="shrink-0 rounded-md p-2 text-xs text-text-secondary hover:text-danger sm:opacity-0 sm:group-hover:opacity-100"
-	>
-		Delete
-	</button>
 </a>
