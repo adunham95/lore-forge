@@ -29,7 +29,8 @@
 			section: 'Narrative',
 			items: [
 				{ href: resolve('/stories/[storyId]/get-started', { storyId }), label: 'Outline' },
-				{ href: resolve('/stories/[storyId]/chapters', { storyId }), label: 'Chapters & Scenes' }
+				{ href: resolve('/stories/[storyId]/chapters', { storyId }), label: 'Chapters & Scenes' },
+				{ href: `${resolve('/writers-block')}?storyId=${storyId}`, label: 'Writers Block' }
 			]
 		}
 	]);

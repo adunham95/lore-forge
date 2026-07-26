@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { writersBlockEntries, loadWritersBlockEntries, saveWritersBlockEntry } from '$lib/stores/writersBlock';
@@ -13,7 +14,15 @@
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
 	import WritersBlockCard from '$lib/components/writers-block/WritersBlockCard.svelte';
 
-	const sorted = $derived(byUpdatedDesc($writersBlockEntries));
+	const filterStoryId = $derived(page.url.searchParams.get('storyId') ?? undefined);
+	const filterStory = $derived($stories.find((s) => s.id === filterStoryId));
+	const sorted = $derived(
+		byUpdatedDesc(
+			filterStoryId
+				? $writersBlockEntries.filter((e) => e.storyId === filterStoryId)
+				: $writersBlockEntries
+		)
+	);
 
 	let showCreate = $state(false);
 	let title = $state('');
@@ -36,6 +45,7 @@
 			id: newId(),
 			title: title.trim(),
 			content: '',
+			storyId: filterStoryId,
 			characterIds: [],
 			createdAt: timestamp,
 			updatedAt: timestamp
@@ -56,9 +66,16 @@
 	<div class="mb-6 flex items-center justify-between">
 		<div>
 			<h1 class="font-serif text-3xl">Writers Block</h1>
-			<p class="text-sm text-text-secondary">
-				A freeform dump for whatever's on your mind — tie it to a story, or don't.
-			</p>
+			{#if filterStory}
+				<p class="text-sm text-text-secondary">
+					Showing entries tied to <span class="font-medium text-text-primary">{filterStory.title}</span>
+					— <a href={resolve('/writers-block')} class="underline hover:text-text-primary">view all</a>
+				</p>
+			{:else}
+				<p class="text-sm text-text-secondary">
+					A freeform dump for whatever's on your mind — tie it to a story, or don't.
+				</p>
+			{/if}
 		</div>
 		<Button onclick={openCreate}>+ New Entry</Button>
 	</div>
