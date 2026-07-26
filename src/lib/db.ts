@@ -364,13 +364,17 @@ export async function saveSettings(settings: AppSettings): Promise<void> {
 	await db.settings.put(settings, 'app');
 }
 
-/** Puts `rows` whose `updatedAt` is newer than the local copy (or that don't exist locally yet). */
+/**
+ * Puts `rows` whose `updatedAt` is newer than the local copy (or that don't exist locally yet).
+ * `rows` may be missing entirely if the pulled bundle predates this entity's addition to
+ * `SyncBundle` — an older device can still push bundles without newer fields.
+ */
 async function upsertNewer<T extends { updatedAt: string }>(
 	table: Table<T, string>,
 	keyField: keyof T,
-	rows: T[]
+	rows: T[] | undefined
 ): Promise<void> {
-	if (rows.length === 0) return;
+	if (!rows || rows.length === 0) return;
 	const existing = await table.toArray();
 	const existingByKey = new Map(existing.map((row) => [row[keyField], row]));
 	const toPut = rows.filter((row) => {
