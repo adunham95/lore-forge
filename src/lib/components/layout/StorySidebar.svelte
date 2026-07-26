@@ -32,6 +32,10 @@
 				{ href: resolve('/stories/[storyId]/chapters', { storyId }), label: 'Chapters & Scenes' },
 				{ href: `${resolve('/writers-block')}?storyId=${storyId}`, label: 'Writers Block' }
 			]
+		},
+		{
+			section: 'Settings',
+			items: [{ href: resolve('/stories/[storyId]/settings', { storyId }), label: 'Settings' }]
 		}
 	]);
 
